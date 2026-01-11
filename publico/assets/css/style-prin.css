@@ -1,0 +1,609 @@
+*{
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 1.2rem;
+  font-family: Arial, Helvetica, sans-serif;
+  box-sizing: border-box;
+}
+
+/* ---------------- HEADER ---------------- */
+
+.header{
+  background:#0b3b42;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+}
+
+.header > a{
+  font-size: 1.4rem;
+  font-weight: bold;
+  text-decoration: none;
+  color: white;
+}
+
+.menu{
+  list-style: none;
+  display: flex;
+}
+
+.menu > li{
+  position: relative;
+  margin-left: 15px;
+  display: flex;
+  align-items: center;
+}
+
+.dropbtn,
+.menu > li > a{
+  background: none;
+  border: none;
+  color: white;
+
+  padding: 10px 14px;
+  cursor: pointer;
+  text-decoration: none;
+  font: inherit;
+  display: block;
+}
+
+.dropbtn:hover,
+.menu > li > a:hover{
+  background: rgba(255,255,255,0.2);
+  border-radius: 6px;
+}
+
+/* ---------- SUBMENU ---------- */
+
+.submenu{
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+
+  width: 180px;
+  background: #0b3b428e;
+  padding: 6px 0;
+
+  display: none;
+  flex-direction: column;
+  align-items: stretch;
+
+  border-radius: 10px;
+  overflow: hidden;
+  z-index: 10;
+}
+
+.submenu li{
+  width: 100%;
+}
+
+.submenu li a{
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+
+  padding: 8px 0;
+  text-align: center;
+  color: white;
+  text-decoration: none;
+}
+
+.submenu li a:hover{
+  background: rgba(255,255,255,0.18);
+}
+
+/* ---------- ABERTURA ---------- */
+
+.dropdown:hover .submenu{
+  display: flex;
+}
+
+
+/* ---------------- section 1 e 2 ---------------- */
+
+.bloco{
+  width: 100%;
+  padding: 100px 20px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* fundos */
+
+.fundo-1{
+  background: radial-gradient(
+    circle at 0% 0%,
+    #0b3b42 0%,
+    #2f5f5a 60%,
+    #1f3f3a 120%
+  );
+}
+
+
+.fundo-2{
+  background: linear-gradient(
+    135deg,
+    #1f5f58 0%,
+    #4f8f77 100%
+  );
+}
+
+/* div central */
+
+.bloco{
+  width: 100%;
+  padding: 100px 0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background-size: cover;
+  background-position: center;
+}
+
+/* véu em largura total */
+
+.veil{
+  width: 100%;
+  background: rgba(255,255,255,0.08);
+  padding: 40px 20px;
+}
+
+
+/* conteúdo centralizado */
+
+.bloco-conteudo{
+  max-width: 1100px;
+  margin: 0 auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+}
+
+/* inversão de layout */
+
+.bloco-conteudo.reverse{
+  flex-direction: row-reverse;
+}
+
+/* imagem */
+
+.bloco-img{
+  flex: 1;
+}
+
+.bloco-img img{
+  width: 100%;
+  max-width: 350px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+/* texto */
+
+.bloco-texto{
+  flex: 1;
+  text-align: center;
+}
+
+.bloco-texto h2{
+  margin-bottom: 15px;
+}
+
+.bloco-texto p{
+  max-width: 520px;      /* limita a largura do texto */
+  margin: 0 auto 20px;  /* centraliza e dá espaço embaixo */
+  line-height: 1.4;     /* menos espaçado entre linhas */
+  text-align: justify; /* aparência de bloco mais “fechada” */
+}
+
+/* ---------------- BOTÃO ---------------- */
+
+.btn{
+  display: inline-block;
+  padding: 10px 18px;
+  background: rgb(60, 120, 60);
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+}
+
+.btn:hover{
+  background: rgb(40, 100, 40);
+}
+
+@media (max-width: 800px){
+
+  .bloco{
+    padding: 60px 15px;
+  }
+
+  .veil{
+    padding: 30px 15px;
+  }
+
+  .bloco-conteudo{
+    flex-direction: column;
+    text-align: center;
+    gap: 25px;
+  }
+
+  .bloco-conteudo.reverse{
+    flex-direction: column; /* ignora a inversão no mobile */
+  }
+
+  .bloco-img img{
+    max-width: 280px;
+  }
+
+  .bloco-texto{
+    width: 100%;
+  }
+
+}
+
+
+
+
+
+
+/* ---------------- section 3---------------- */
+.sec-producao {
+  width: 100%;
+  padding: 80px 20px;
+  background: linear-gradient(135deg, #0b2a4a, #123f73);
+  display: flex;
+  justify-content: center;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.sec-container {
+  width: 100%;
+  max-width: 1300px;
+  margin: 0 auto; /* Centraliza e evita overflow */
+  display: flex;
+  align-items: center;
+  gap: 60px;
+}
+
+/* TEXTO */
+
+.sec-texto{
+  flex: 1;
+  color: white;
+}
+
+.sec-texto h2{
+  font-size: 2.4rem;
+  margin-bottom: 15px;
+}
+
+.sec-texto p{
+  font-size: 1.05rem;
+  line-height: 1.6;
+  opacity: 0.95;
+}
+
+/* GRID DE CARDS */
+
+.sec-cards{
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 50px;
+  grid-auto-rows: 240px; /* altura das células */
+}
+
+/* CARD */
+
+.card{
+  background: rgb(255, 255, 255);
+  border-radius: 14px;
+  padding: 22px 18px;
+  text-align: center;
+  min-height: 220px; /* altura */
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  cursor: pointer;
+}
+
+
+.card:hover{
+  transform: scale(1.15);
+   transition: transform 0.3s ease;
+  box-shadow: 0 12px 26px rgba(0,0,0,0.22);
+}
+
+/* ÍCONE FAKE */
+
+.card .icon{
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+/* TÍTULO */
+
+.card h3{
+  font-size: 1.05rem;
+  font-weight: bold;
+  margin-bottom: 8px;
+  text-decoration: underline;
+}
+
+/* TEXTO */
+
+.card p{
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: #444;
+}
+
+/* RESPONSIVO */
+
+@media (max-width: 800px){
+
+  .sec-container{
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .sec-cards{
+    grid-template-columns: 1fr;
+    width: 100%;
+  }
+
+}
+
+
+/* ---------------- section 4 ---------------- */
+
+.sec-noticias{
+  width: 100%;
+  background: #f2f4f7;
+}
+
+/* ===== BARRA SUPERIOR ===== */
+
+.noticias-barra{
+  width: 100%;
+  background: #1e3a5f;
+  color: white;
+  text-align: center;
+  padding: 14px 0;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+/* ===== CONTEÚDO ===== */
+
+.noticias-conteudo{
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 60px 20px;
+
+  display: grid;
+  grid-template-columns: 1fr 2fr; /* 1/3 + 2/3 */
+  gap: 40px;
+}
+
+/* ===== NOTÍCIA GRANDE ===== */
+
+.noticia-principal{
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* CAIXA QUE LIMITA A IMAGEM */
+.img-wrapper-grande{
+  width: 100%;
+  height: 600px;           /* AQUI você controla a altura */
+  overflow: hidden;
+  border-radius: 14px;
+}
+
+.img-wrapper-grande img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;      /* imagem preenche sem estourar */
+}
+
+.legenda-grande{
+  font-weight: bold;
+}
+
+/* ===== GRID ===== */
+
+.grid-noticias{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+
+  /* LIMITA O TAMANHO DO BLOCO TODO */
+  align-content: start;
+}
+
+/* ===== CARDS ===== */
+
+.card-mini{
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+  transition: transform 0.25s ease;
+}
+
+/* LIMITADOR DA IMAGEM PEQUENA */
+.img-wrapper-mini{
+  width: 100%;
+  height: 250px;          /* AQUI você trava a altura */
+  overflow: hidden;
+}
+
+.img-wrapper-mini img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-mini p{
+  padding: 8px;
+  font-size: 0.9rem;
+}
+
+.card-mini:hover{
+  transform: scale(1.05);
+}
+
+/* ===== RESPONSIVO ===== */
+
+@media (max-width: 900px){
+  .noticias-conteudo{
+    grid-template-columns: 1fr;
+  }
+
+  .grid-noticias{
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 500px){
+  .grid-noticias{
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ---------------- section 5---------------- */
+.footer {
+  background: #1e3a2a;
+  color: white;
+  margin-top: 100px;
+  width: 100%;
+  overflow: hidden; /* Previne overflow */
+}
+
+.footer-main {
+  width: 100%;
+  padding: 30px 30px; /* Padding igual em todos os lados */
+  display: grid;
+  grid-template-columns: auto 1fr 1fr auto auto;
+  align-items: start;
+  gap: 30px;
+  /* Remove max-width e margin auto para ficar colado nas bordas */
+}
+
+.footer-col{
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ===== COLUNA 1 ===== */
+
+.footer-left{
+  align-items: flex-start;
+  text-align: left;
+}
+
+.footer-logo{
+  width: 80px;
+}
+
+.footer-image-box{
+  width: 180px;
+  height: 90px;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.footer-image-box img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.footer-address{
+  font-size: 0.9rem;
+}
+
+/* ===== COLUNAS VAZIAS ===== */
+
+
+
+/* ===== CONTATOS ===== */
+
+.footer-contacts{
+  align-items: flex-start;
+  text-align: left;
+}
+
+.footer-title{
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+.contact-item{
+  display: flex;
+  align-items: center;
+  gap: 8px; /* futuro ícone */
+  font-size: 0.9rem;
+}
+
+/* ===== LOGOS DIREITA ===== */
+
+.footer-right-logos{
+  align-items: flex-start;
+  gap: 15px;
+}
+
+.footer-logo-small{
+  width: 70px;
+}
+
+.footer-contacts,
+.footer-right-logos{
+  justify-self: end;
+}
+
+/* ===== FAIXA FINAL ===== */
+
+.footer-bottom{
+  background: #0f1f16;
+  text-align: center;
+  padding: 10px;
+  font-size: 0.75rem;
+}
+
+/* ===== RESPONSIVO ===== */
+
+@media (max-width: 900px){
+
+  .footer-main{
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: 30px;
+  }
+
+  .footer-left,
+  .footer-contacts,
+  .footer-right-logos{
+    align-items: center;
+    text-align: center;
+  }
+
+}
