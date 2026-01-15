@@ -1,0 +1,5 @@
+if (tagsEl && Array.isArray(artigo.palavrasChave)) {
+        tagsEl.textContent = artigo.palavrasChave
+          .map(tag => `#${tag}`)
+          .join(" ");
+      }

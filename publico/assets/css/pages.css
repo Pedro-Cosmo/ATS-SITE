@@ -42,7 +42,6 @@
   background: none;
   border: none;
   color: white;
-
   padding: 10px 14px;
   cursor: pointer;
   text-decoration: none;
@@ -63,15 +62,12 @@
   top: 100%;
   left: 50%;
   transform: translateX(-50%);
-
   width: 180px;
   background: #0b3b428e;
   padding: 6px 0;
-
   display: none;
   flex-direction: column;
   align-items: stretch;
-
   border-radius: 10px;
   overflow: hidden;
   z-index: 10;
@@ -85,7 +81,6 @@
   display: block;
   width: 100%;
   box-sizing: border-box;
-
   padding: 8px 0;
   text-align: center;
   color: white;
@@ -102,72 +97,74 @@
   display: flex;
 }
 
+/* ---------------- SOBRE NÓS ---------------- */
 
-  .sobrenos{
-      margin: 0;
-      font-family: Arial, sans-serif;
-      color: #222;
-      line-height: 1.6;
-    background: radial-gradient(
+.sobrenos{
+  margin: 0;
+  font-family: Arial, sans-serif;
+  color: #222;
+  line-height: 1.6;
+  background: radial-gradient(
     circle at 0% 0%,
     #0b3b42 0%,
     #2f5f5a 60%,
     #1f3f3a 120%
   );
-    }
+}
 
 main {
-      max-width: 1100px;
-      margin: 2.5rem auto;
-      padding: 0 1rem;
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-    }
+  max-width: 1100px;
+  margin: 2.5rem auto;
+  padding: 0 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
 
-    /* BLOCO INSTITUCIONAL */
-    .bloco-institucional {
-      display: flex;
-      gap: 1.5rem;
-      background: #fafaf6;
-      padding: 1.5rem;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-      background: rgba(255, 255, 255, 0.78);
-      backdrop-filter: blur(4px);
-    }
+/* BLOCO INSTITUCIONAL */
+.bloco-institucional {
+  display: flex;
+  gap: 1.5rem;
+  background: #fafaf6;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(4px);
+}
 
-    .bloco-img img {
-      width: 180px;
-      height: 180px;
-      object-fit: cover;
-      border-radius: 6px;
-    }
+.bloco-img img {
+  width: 180px;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 6px;
+}
 
-    .bloco-conteudo h2 {
-      margin-top: 0;
-      font-size: 1.4rem;
-    }
+.bloco-conteudo h2 {
+  margin-top: 0;
+  font-size: 1.4rem;
+}
 
-    .bloco-conteudo p {
-      margin-bottom: 1rem;
-      text-align: justify;
-    }
+.bloco-conteudo p {
+  margin-bottom: 1rem;
+  text-align: justify;
+}
 
-    @media (max-width: 800px) {
-      .bloco-institucional {
-        flex-direction: column;
-        align-items: center;
-      }
+@media (max-width: 800px) {
+  .bloco-institucional {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .bloco-img img {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+  }
+}
 
-      .bloco-img img {
-        width: 100%;
-        max-width: 300px;
-        height: auto;
-      }
-    }
+/* ---------------- ARTIGOS ---------------- */
 
-    
 .artigos {
   margin: 0;
   font-family: Arial, sans-serif;
@@ -175,71 +172,100 @@ main {
     circle at 0% 0%,
     #0b3b42 0%,
     #2f5f5a 60%,
-    #1f3f3a 120%)
+    #1f3f3a 120%
+  );
 }
 
-/* container da lista */
 .artigos-container {
-  max-width: 1100px;
-  margin: 2rem auto;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem; /* espaço entre notícias */
-  padding: 0 1rem;
+  gap: 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 16px;
 }
 
-/* cartão de cada artigo */
 .artigo-card {
   display: flex;
-  gap: 1.5rem;
-  background: #fafaf6; /* pastel do card */
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(101, 206, 110, 0.08);
+  gap: 24px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* bloco da imagem + botão */
+.artigo-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.10);
+}
+
 .artigo-lateral {
   display: flex;
   flex-direction: column;
-  align-items: center; /* centraliza botão com a imagem */
-  gap: 0.6rem;
+  align-items: center;
+  gap: 12px;
+  min-width: 140px;
 }
 
 .artigo-lateral img {
-  width: 180px;
-  height: 130px;
+  width: 140px;
+  height: 180px;
   object-fit: cover;
-  border-radius: 4px;
+  border-radius: 8px;
+  background-color: #f0f0f0;
 }
 
-/* conteúdo textual */
 .artigo-conteudo {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  flex: 1;
 }
 
 .artigo-conteudo h2 {
-  margin: 0 0 0.5rem 0;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #1f2933;
+  margin-bottom: 10px;
 }
 
-.artigo-conteudo .descricao {
-  color: #333;
-  line-height: 1.4;
+.descricao {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #4b5563;
+  margin-bottom: 16px;
 }
 
-/* botão PDF */
 .btn-pdf {
-  padding: 0.45rem 1rem;
-  background: #2b5dab;
-  color: white;
-  text-decoration: none;
-  border-radius: 4px;
   font-size: 0.85rem;
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  background-color: #e8e8e8;
+  color: #333;
+  transition: background-color 0.2s ease;
 }
 
 .btn-pdf:hover {
-  background: #1f4685;
+  background-color: #d6d6d6;
+}
+
+.btn-detalhe {
+  align-self: flex-start;
+  background-color: transparent;
+  border: 1px solid #1f2933;
+  color: #1f2933;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.btn-detalhe:hover {
+  background-color: #1f2933;
+  color: #ffffff;
 }
 
 .faixa-titulo {
@@ -255,25 +281,79 @@ main {
   letter-spacing: 0.5px;
 }
 
+@media (max-width: 768px) {
+  .artigo-card {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .artigo-lateral {
+    flex-direction: row;
+    justify-content: center;
+  }
+  
+  .artigo-conteudo {
+    align-items: center;
+  }
+  
+  .btn-detalhe {
+    align-self: center;
+  }
+}
 
 
-/* ---------------- section 5---------------- */
+.meta {
+  font-size: 0.65rem;
+}
+
+.meta .autor {
+  font-size: 0.95rem;
+  font-style: italic;
+  opacity: 0.75;
+}
+
+.meta .tags {
+  font-size: 0.6rem;
+  opacity: 0.7;
+}
+
+.artigo-rodape {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.meta {
+  font-size: 0.65rem;
+  color: #6b7280;
+}
+
+.btn-detalhe {
+  margin-left: auto;
+}
+
+
+
+
+/* ---------------- FOOTER ---------------- */
+
 .footer {
   background: #1e3a2a;
   color: white;
   margin-top: 100px;
   width: 100%;
-  overflow: hidden; /* Previne overflow */
+  overflow: hidden;
 }
 
 .footer-main {
   width: 100%;
-  padding: 30px 30px; /* Padding igual em todos os lados */
+  padding: 30px;
   display: grid;
   grid-template-columns: auto 1fr 1fr auto auto;
   align-items: start;
   gap: 30px;
-  /* Remove max-width e margin auto para ficar colado nas bordas */
 }
 
 .footer-col{
@@ -281,8 +361,6 @@ main {
   flex-direction: column;
   gap: 12px;
 }
-
-/* ===== COLUNA 1 ===== */
 
 .footer-left{
   align-items: flex-start;
@@ -310,12 +388,6 @@ main {
   font-size: 0.9rem;
 }
 
-/* ===== COLUNAS VAZIAS ===== */
-
-
-
-/* ===== CONTATOS ===== */
-
 .footer-contacts{
   align-items: flex-start;
   text-align: left;
@@ -329,11 +401,9 @@ main {
 .contact-item{
   display: flex;
   align-items: center;
-  gap: 8px; /* futuro ícone */
+  gap: 8px;
   font-size: 0.9rem;
 }
-
-/* ===== LOGOS DIREITA ===== */
 
 .footer-right-logos{
   align-items: flex-start;
@@ -349,8 +419,6 @@ main {
   justify-self: end;
 }
 
-/* ===== FAIXA FINAL ===== */
-
 .footer-bottom{
   background: #0f1f16;
   text-align: center;
@@ -358,21 +426,58 @@ main {
   font-size: 0.75rem;
 }
 
-/* ===== RESPONSIVO ===== */
-
 @media (max-width: 900px){
-
   .footer-main{
     grid-template-columns: 1fr;
     text-align: center;
     gap: 30px;
   }
-
+  
   .footer-left,
   .footer-contacts,
   .footer-right-logos{
     align-items: center;
     text-align: center;
   }
+}
 
+
+
+
+
+.noticia-detalhe {
+  display: flex;
+  justify-content: center;
+  padding: 48px 16px;
+}
+
+.noticia-corpo {
+  max-width: 720px;
+  width: 100%;
+}
+
+.noticia-corpo h1 {
+  font-size: 1.8rem;
+  line-height: 1.2;
+  margin-bottom: 12px;
+}
+
+.noticia-meta {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-bottom: 24px;
+}
+
+.noticia-corpo p {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: #111827;
+}
+
+.voltar {
+  display: inline-block;
+  margin-top: 32px;
+  font-size: 0.8rem;
+  color: #374151;
+  text-decoration: none;
 }

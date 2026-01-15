@@ -3,10 +3,10 @@
    <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Artigos</title>
       <link rel="stylesheet" href="/publico/assets/css/pages.css">
+      <title>Notícia</title>
    </head>
-   <body class="artigos">
+   <body>
       <!----------------------------cabeçalho --------------------------------->
       <header class="header">
          <a href="/publico/index.html">LIGA-ATS</a>
@@ -34,45 +34,27 @@
       </header>
 
 
-      <div class="faixa-titulo">
-         <h1>Artigos Acadêmicos</h1>
-      </div>
+<main class="noticia-detalhe">
+  <article class="noticia-corpo">
+    <h1 id="titulo"></h1>
 
-
-      <main class="artigos-container" id="artigos-container">
-         <!-- aqui NÃO tem section nenhuma --> 
-      </main>
-
-
-   <template id="template-artigo">
-  <section class="artigo-card">
-
-    <div class="artigo-lateral">
-      <img src="" alt="">
-      <a class="btn-pdf" href="" download>Baixar PDF</a>
+    <div class="noticia-meta">
+      <span id="autor"></span>
     </div>
 
-    <div class="artigo-conteudo">
-      <h2></h2>
-      <p class="descricao"></p>
+    <p id="descricao-longa"></p>
 
-      <div class="artigo-rodape">
-        <div class="meta">
-          <span class="autor"></span>
-          <span class="tags"></span>
-        </div>
-
-        <button class="btn-detalhe">Ler mais</button>
-      </div>
-    </div>
-
-  </section>
-</template>
+    <a href="/publico/pages/artigos.html" class="voltar">← Voltar</a>
+  </article>
+</main>
 
 
 
 
-      <!----------------------------SEÇÃO FOOTER------------------------------------>
+
+
+
+
       <footer class="footer">
          <div class="footer-main">
             <!-- COLUNA 1: LOGO ESQUERDA -->
@@ -107,64 +89,25 @@
          </div>
       </footer>
 
-<script>
-fetch("/publico/assets/data/dados.json")
-  .then(res => res.json())
-  .then(dados => {
-
-    const container = document.getElementById("artigos-container");
-    const template = document.getElementById("template-artigo");
-
-    if (!container || !template) return;
-
-    dados.slice(0, 5).forEach(artigo => {
-
-      const clone = template.content.cloneNode(true);
-
-      const img = clone.querySelector("img");
-      const h2 = clone.querySelector("h2");
-      const p = clone.querySelector(".descricao");
-      const linkPdf = clone.querySelector(".btn-pdf");
-      const btnDetalhe = clone.querySelector(".btn-detalhe");
-      const autorEl = clone.querySelector(".autor");
-      const tagsEl = clone.querySelector(".tags");
-
-      if (img) {
-        img.src = artigo.imagem || "";
-        img.alt = artigo.titulo || "Imagem do artigo";
-      }
-
-      if (h2) {
-        h2.textContent = artigo.titulo || "Sem título";
-      }
-
-      if (p) {
-        p.textContent = artigo.descricaoLonga || "Descrição não disponível.";
-      }
-
-      if (linkPdf) {
-        linkPdf.href = artigo.pdf || "#";
-      }
-
-      if (autorEl && Array.isArray(artigo.autores)) {
-        autorEl.textContent = `Autor(s):  ${artigo.autores.join(", ")}`;
-      }
-
-      
-
-      if (btnDetalhe) {
-        btnDetalhe.addEventListener("click", () => {
-          window.location.href = `/publico/pages/artdetalhe.html?id=${artigo.id}`;
-        });
-      }
-
-      container.appendChild(clone);
-    });
-
-  })
-  .catch(err => console.error("Erro ao carregar artigos:", err));
-</script>
 
 
+
+
+      <script>
+         const params = new URLSearchParams(window.location.search);
+         const id = Number(params.get("id"));
+         
+         fetch("/publico/assets/data/dados.json")
+           .then(res => res.json())
+           .then(noticias => {
+         
+             const noticia = noticias.find(n => n.id === id);
+             if (!noticia) return;
+         
+             document.getElementById("titulo").textContent = noticia.descricaoCurta;
+             document.getElementById("descricao-longa").textContent = noticia.descricaoLonga;
+             document.title = noticia.descricaoCurta;
+           });
+      </script>
    </body>
 </html>

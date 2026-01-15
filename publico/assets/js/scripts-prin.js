@@ -33,7 +33,7 @@ function carregarMiniNoticias() {
         p.textContent = noticia.descricaoCurta;
 
         card.addEventListener("click", () => {
-          window.location.href = `/publico/pages/detalhe.html?id=${noticia.id}`;
+          window.location.href = `/publico/pages/artdetalhe.html?id=${noticia.id}`;
         });
 
         grid.appendChild(clone);
