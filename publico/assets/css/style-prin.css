@@ -156,7 +156,7 @@
 
 .veil{
   width: 100%;
-  background: rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.308);
   padding: 40px 20px;
 }
 
@@ -572,7 +572,7 @@
 }
 
 .footer-logo-small{
-  width: 70px;
+  width: 150px;
 }
 
 .footer-contacts,
