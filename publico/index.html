@@ -9,9 +9,9 @@
 </head>
 <body>
 
-<!------------ ----------------cabeçalho --------------------------------->
-   <header class="header">
-  <a href="/">LIGA-ATS</a>
+<!----------------------------cabeçalho --------------------------------->
+<header class="header">
+  <a href="/publico/index.html">LIGA-ATS</a>
 
   <nav>
     <ul class="menu">
@@ -19,15 +19,15 @@
       <li class="dropdown">
         <button class="dropbtn">SOBRE ▾</button>
         <ul class="submenu">
-          <li><a href="#">LIGA</a></li>
-          <li><a href="#">GETASF</a></li>
+          <li><a href="/publico/pages/sobrenos.html#liga">LIGA</a></li>
+          <li><a href="/publico/pages/sobrenos.html#geesfar">GETASF</a></li>
         </ul>
       </li>
 
       <li class="dropdown">
         <button class="dropbtn">PUBLICAÇÕES ▾</button>
         <ul class="submenu">
-          <li><a href="#">Artigos</a></li>
+          <li><a href="./pages/artigos.html">Artigos</a></li>
           <li><a href="#">Resumos</a></li>
           <li><a href="#">Materiais</a></li>
         </ul>
@@ -40,9 +40,7 @@
   </nav>
 </header>
 
-<!------------ ----------------cabeçalho --------------------------------->
-
-<!------------ ----------------SEÇÃO 2 ----------------------------------->
+<!----------------------------SEÇÃO 2 ----------------------------------->
 
 <section class="bloco fundo-2">
   <div class="veil">
@@ -58,14 +56,14 @@
           A LIGATS é uma entidade acadêmica sem fins lucrativos e tem dentre os seus objetivos o desenvolvimento de atividades no contexto
           do ensino, pesquisa e extensão direcionados à temática da Avaliação de Tecnologia em Saúde.
         </p>
-        <a href="#" class="btn">Ver mais</a>
+        <a href="/publico/pages/sobrenos.html" class="btn">Ver mais</a>
       </div>
 
     </div>
   </div>
 </section>
 
-<!------------ ----------------SEÇÃO 1 ----------------------------------->
+<!----------------------------SEÇÃO 1 ----------------------------------->
 
 <section class="bloco fundo-1">
   <div class="veil">
@@ -81,15 +79,14 @@
           O Núcleo de Avaliação de Tecnologias em Saúde GEESFAR (Gestão, economia e educação em saúde e serviços farmacêuticos) tem como objetivo desenvolver e disseminar conhecimentos em saúde relacionados às áreas de economia, avaliação crítica de evidências para suporte ao processo de tomada de decisão, avaliação de preferências e qualidade de vida.
         </p>
 
-        <a href="#" class="btn">Ver mais</a>
+        <a href="/publico/pages/sobrenos.html" class="btn">Ver mais</a>
       </div>
 
     </div>
   </div>
 </section>
 
-
-<!------------ ----------------SEÇÃO 3------------------------------------>
+<!----------------------------SEÇÃO 3------------------------------------>
 
 <section class="sec-producao">
   <div class="sec-container">
@@ -134,22 +131,16 @@
   </div>
 </section>
 
-<!------------ ----------------SEÇÃO 3------------------------------------>
+<!----------------------------SEÇÃO 4------------------------------------>
 
-
-<!------------ ----------------SEÇÃO 4------------------------------------>
 
 <section class="sec-noticias">
 
-  <!-- FAIXA SUPERIOR -->
-  <div class="noticias-barra">
-    NOTÍCIAS
-  </div>
+  <div class="noticias-barra">NOTÍCIAS</div>
 
-  <!-- CONTEÚDO -->
   <div class="noticias-conteudo">
 
-    <!-- 1/3 — NOTÍCIA GRANDE -->
+    <!-- NOTÍCIA GRANDE (pode ficar estática por enquanto) -->
     <div class="noticia-principal">
       <div class="img-wrapper-grande">
         <img src="./img/evangelion.jpg" alt="Notícia principal">
@@ -159,61 +150,22 @@
       </p>
     </div>
 
-    <!-- 2/3 — GRID 3x2 -->
-    <div class="grid-noticias">
-
-      <div class="card-mini">
-        <div class="img-wrapper-mini">
-          <img src="./img/im5.jpg" alt="">
-        </div>
-        <p>Legenda</p>
-      </div>
-
-      <div class="card-mini">
-        <div class="img-wrapper-mini">
-          <img src="./img/im5.jpg" alt="">
-        </div>
-        <p>Legenda</p>
-      </div>
-
-      <div class="card-mini">
-        <div class="img-wrapper-mini">
-          <img src="./img/im4.jpg" alt="">
-        </div>
-        <p>Legenda</p>
-      </div>
-
-      <div class="card-mini">
-        <div class="img-wrapper-mini">
-          <img src="./img/im3.jpg" alt="">
-        </div>
-        <p>Legenda</p>
-      </div>
-
-      <div class="card-mini">
-        <div class="img-wrapper-mini">
-          <img src="./img/im2.jpg" alt="">
-        </div>
-        <p>Legenda</p>
-      </div>
-
-      <div class="card-mini">
-        <div class="img-wrapper-mini">
-          <img src="./img/im1.jpg" alt="">
-        </div>
-        <p>Legenda</p>
-      </div>
-
-    </div>
-
+    <!-- GRID DINÂMICO -->
+    <div class="grid-noticias" id="grid-noticias"></div>
   </div>
+
+  <template id="template-mini">
+  <div class="card-mini">
+    <div class="img-wrapper-mini">
+      <img src="" alt="">
+    </div>
+    <p></p>
+  </div>
+</template>
 </section>
 
-<!------------ ----------------SEÇÃO 4------------------------------------>
 
-
-
-<!------------ ----------------SEÇÃO 5------------------------------------>
+<!----------------------------SEÇÃO 5------------------------------------>
 
 <footer class="footer">
 
@@ -254,8 +206,8 @@
     <!-- COLUNA 5: LOGOS DIREITA -->
     <div class="footer-col footer-right-logos">
 
-      <img src="/img/im2.jpg" alt="Logo da FAETEC" class="footer-logo-small">
-      <img src="/img/im3.jpg" alt="Logo da UFRJ" class="footer-logo-small">
+      <img src="/publico/assets/data/img/faetec.png" alt="Logo da FAETEC" class="footer-logo-small">
+      <img src="/publico/assets/data/img/ufrj.png" alt="Logo da UFRJ" class="footer-logo-small">
 
     </div>
 
@@ -268,7 +220,6 @@
 </footer>
 
 
-<!------------ ----------------SEÇÃO 5------------------------------------>
 
 <script src="./assets/js/scripts-prin.js"></script>
 </body>
