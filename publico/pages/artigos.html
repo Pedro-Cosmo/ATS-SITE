@@ -7,31 +7,41 @@
       <link rel="stylesheet" href="/publico/assets/css/pages.css">
    </head>
    <body class="artigos">
-      <!----------------------------cabeçalho --------------------------------->
-      <header class="header">
-         <a href="/publico/index.html">LIGA-ATS</a>
-         <nav>
-            <ul class="menu">
-               <li class="dropdown">
-                  <button class="dropbtn">SOBRE ▾</button>
-                  <ul class="submenu">
-                     <li><a href="/publico/pages/sobrenos.html#liga">LIGA</a></li>
-                     <li><a href="/publico/pages/sobrenos.html#geesfar">GETASF</a></li>
-                  </ul>
-               </li>
-               <li class="dropdown">
-                  <button class="dropbtn">PUBLICAÇÕES ▾</button>
-                  <ul class="submenu">
-                     <li><a href="/publico/pages/artigos.html">Artigos</a></li>
-                     <li><a href="#">Resumos</a></li>
-                     <li><a href="#">Materiais</a></li>
-                  </ul>
-               </li>
-               <li><a href="#">CONTATOS</a></li>
-               <li><a href="#">NOTÍCIAS</a></li>
-            </ul>
-         </nav>
-      </header>
+     <!----------------------------cabeçalho --------------------------------->
+<header class="header">
+  <a href="/publico/index.html" class="logo">
+    <span class="logo-main">LIGA-ATS</span>
+  </a>
+
+  <nav>
+    <ul class="menu">
+
+      <li class="dropdown">
+        <button class="dropbtn">PUBLICAÇÕES ▾</button>
+        <ul class="submenu">
+          <li><a href="/publico/pages/artigos.html">Artigos</a></li>
+          <li><a href="#">Resumos</a></li>
+          <li><a href="#">Materiais</a></li>
+          <li><a href="#">Teses e Dissertações</a></li>
+        </ul>
+      </li>
+
+      <li><a href="#">NOTÍCIAS</a></li>
+
+      <li class="dropdown">
+        <button class="dropbtn">SOBRE ▾</button>
+        <ul class="submenu">
+          <li><a href="/publico/pages/sobrenos.html#liga">A Liga</a></li>
+          <li><a href="/publico/pages/sobrenos.html#geesfar">GEESFAR</a></li>
+          <li><a href="#">Membros</a></li>
+        </ul>
+      </li>
+
+      <li><a href="#">CONTATOS</a></li>
+
+    </ul>
+  </nav>
+</header>
 
 
       <div class="faixa-titulo">
@@ -43,6 +53,22 @@
          <!-- aqui NÃO tem section nenhuma --> 
       </main>
 
+<nav class="artigos-paginacao" aria-label="Paginação de artigos">
+  <button class="pg-seta is-disabled" type="button" disabled aria-label="Página anterior">
+    ‹
+  </button>
+
+  <div class="pg-bolinhas">
+    <button class="pg-bolinha is-active" type="button" aria-current="page" aria-label="Página 1"></button>
+    <button class="pg-bolinha" type="button" aria-label="Página 2"></button>
+    <button class="pg-bolinha" type="button" aria-label="Página 3"></button>
+    <button class="pg-bolinha" type="button" aria-label="Página 4"></button>
+  </div>
+
+  <button class="pg-seta" type="button" aria-label="Próxima página">
+    ›
+  </button>
+</nav>
 
    <template id="template-artigo">
   <section class="artigo-card">

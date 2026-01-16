@@ -10,158 +10,179 @@
 <body>
 
 <!----------------------------cabeçalho --------------------------------->
+
+
 <header class="header">
-  <a href="/publico/index.html">LIGA-ATS</a>
+  <a href="/publico/index.html" class="logo">
+    <span class="logo-main">LIGA-ATS</span>
+  </a>
 
   <nav>
     <ul class="menu">
 
       <li class="dropdown">
-        <button class="dropbtn">SOBRE ▾</button>
+        <button class="dropbtn">PUBLICAÇÕES ▾</button>
         <ul class="submenu">
-          <li><a href="/publico/pages/sobrenos.html#liga">LIGA</a></li>
-          <li><a href="/publico/pages/sobrenos.html#geesfar">GETASF</a></li>
+          <li><a href="/publico/pages/artigos.html">Artigos</a></li>
+          <li><a href="#">Resumos</a></li>
+          <li><a href="#">Materiais</a></li>
+          <li><a href="#">Teses e Dissertações</a></li>
         </ul>
       </li>
 
+      <li><a href="#">NOTÍCIAS</a></li>
+
       <li class="dropdown">
-        <button class="dropbtn">PUBLICAÇÕES ▾</button>
+        <button class="dropbtn">SOBRE ▾</button>
         <ul class="submenu">
-          <li><a href="./pages/artigos.html">Artigos</a></li>
-          <li><a href="#">Resumos</a></li>
-          <li><a href="#">Materiais</a></li>
+          <li><a href="/publico/pages/sobrenos.html#liga">A Liga</a></li>
+          <li><a href="/publico/pages/sobrenos.html#geesfar">GEESFAR</a></li>
+          <li><a href="#">Membros</a></li>
         </ul>
       </li>
 
       <li><a href="#">CONTATOS</a></li>
-      <li><a href="#">NOTÍCIAS</a></li>
 
     </ul>
   </nav>
 </header>
 
-<!----------------------------SEÇÃO 2 ----------------------------------->
+<!----------------------------blocos--------------------------------->
 
-<section class="bloco fundo-2">
-  <div class="veil">
-    <div class="bloco-conteudo reverse">
-
-      <div class="bloco-img">
-        <img src="./img/im2.jpg" alt="Projetos e atividades da Liga">
+<section class="institucional">
+   <!----------------------------SEÇÃO 1 ----------------------------------->
+   <section class="bloco">
+      <div class="veil">
+         <div class="bloco-conteudo">
+            <div class="bloco-img">
+               <img src="/publico/assets/data/img/lain.jpg" alt="Imagem institucional da Liga">
+            </div>
+            <div class="bloco-texto">
+               <h2>Quem somos</h2>
+               <p>
+                  O Núcleo de Avaliação de Tecnologias em Saúde GEESFAR (Gestão, economia e educação em saúde e serviços farmacêuticos) tem como objetivo desenvolver e disseminar conhecimentos em saúde relacionados às áreas de economia, avaliação crítica de evidências para suporte ao processo de tomada de decisão, avaliação de preferências e qualidade de vida.
+               </p>
+               <a href="/publico/pages/sobrenos.html" class="btn">Ver mais</a>
+            </div>
+         </div>
       </div>
-
-      <div class="bloco-texto">
-        <h2>LIGA ACADÊMICA</h2>
-        <p>
-          A LIGATS é uma entidade acadêmica sem fins lucrativos e tem dentre os seus objetivos o desenvolvimento de atividades no contexto
-          do ensino, pesquisa e extensão direcionados à temática da Avaliação de Tecnologia em Saúde.
-        </p>
-        <a href="/publico/pages/sobrenos.html" class="btn">Ver mais</a>
+   </section>
+   <!----------------------------SEÇÃO 2 ----------------------------------->
+   <section class="bloco">
+      <div class="veil">
+         <div class="bloco-conteudo reverse">
+            <div class="bloco-img">
+               <img src="./img/im2.jpg" alt="Projetos e atividades da Liga">
+            </div>
+            <div class="bloco-texto">
+               <h2>LIGA ACADÊMICA</h2>
+               <p>
+                  A LIGATS é uma entidade acadêmica sem fins lucrativos e tem dentre os seus objetivos o desenvolvimento de atividades no contexto
+                  do ensino, pesquisa e extensão direcionados à temática da Avaliação de Tecnologia em Saúde.
+               </p>
+               <a href="/publico/pages/sobrenos.html" class="btn">Ver mais</a>
+            </div>
+         </div>
       </div>
-
-    </div>
-  </div>
+   </section>
 </section>
 
-<!----------------------------SEÇÃO 1 ----------------------------------->
 
-<section class="bloco fundo-1">
-  <div class="veil">
-    <div class="bloco-conteudo">
 
-      <div class="bloco-img">
-        <img src="./img/im1.jpg" alt="Imagem institucional da Liga">
-      </div>
-
-      <div class="bloco-texto">
-        <h2>Quem somos</h2>
-        <p>
-          O Núcleo de Avaliação de Tecnologias em Saúde GEESFAR (Gestão, economia e educação em saúde e serviços farmacêuticos) tem como objetivo desenvolver e disseminar conhecimentos em saúde relacionados às áreas de economia, avaliação crítica de evidências para suporte ao processo de tomada de decisão, avaliação de preferências e qualidade de vida.
-        </p>
-
-        <a href="/publico/pages/sobrenos.html" class="btn">Ver mais</a>
-      </div>
-
-    </div>
-  </div>
-</section>
 
 <!----------------------------SEÇÃO 3------------------------------------>
-
-<section class="sec-producao">
+<section class="sec-producao" aria-labelledby="titulo-producao">
   <div class="sec-container">
 
     <div class="sec-texto">
-      <h2>Produção Científica</h2>
+      <h2 id="titulo-producao">Produção Científica</h2>
       <p>
         Repositório institucional de pesquisas, cursos e protocolos
         desenvolvidos pela comunidade acadêmica, organizados para acesso
-        público e contínua atualização.
+        público e atualização contínua.
       </p>
     </div>
 
     <div class="sec-cards">
 
-      <div class="card">
-        <div class="icon">📘</div>
+      <a href="/teses" class="card">
+        <div class="icon" aria-hidden="true">📘</div>
         <h3>Teses e Dissertações</h3>
         <p>Trabalhos completos de pós-graduação.</p>
-      </div>
+      </a>
 
-      <div class="card">
-        <div class="icon">📄</div>
+      <a href="/producoes-cientificas" class="card">
+        <div class="icon" aria-hidden="true">📄</div>
         <h3>Produções Científicas</h3>
         <p>Relatórios, estudos e pesquisas institucionais.</p>
-      </div>
+      </a>
 
-      <div class="card">
-        <div class="icon">🧾</div>
+      <a href="/artigos" class="card">
+        <div class="icon" aria-hidden="true">🧾</div>
         <h3>Artigos e Resumos</h3>
         <p>Publicações em periódicos e eventos.</p>
-      </div>
+      </a>
 
-      <div class="card">
-        <div class="icon">🎓</div>
+      <a href="/cursos-e-protocolos" class="card">
+        <div class="icon" aria-hidden="true">🎓</div>
         <h3>Cursos e Protocolos</h3>
         <p>Formações e diretrizes técnicas.</p>
-      </div>
+      </a>
 
     </div>
 
   </div>
 </section>
 
+
 <!----------------------------SEÇÃO 4------------------------------------>
 
+<section class="sec-noticias" aria-labelledby="titulo-noticias">
 
-<section class="sec-noticias">
-
-  <div class="noticias-barra">NOTÍCIAS</div>
+  <div class="noticias-barra" id="titulo-noticias">NOTÍCIAS</div>
 
   <div class="noticias-conteudo">
 
-    <!-- NOTÍCIA GRANDE (pode ficar estática por enquanto) -->
-    <div class="noticia-principal">
+    <!-- NOTÍCIA GRANDE -->
+    <article class="noticia-principal">
       <div class="img-wrapper-grande">
         <img src="./img/evangelion.jpg" alt="Notícia principal">
       </div>
       <p class="legenda-grande">
         Manchete da notícia principal em destaque
       </p>
-    </div>
+    </article>
 
     <!-- GRID DINÂMICO -->
-    <div class="grid-noticias" id="grid-noticias"></div>
+    <div class="coluna-grid">
+      <div class="grid-noticias" id="grid-noticias"></div>
+
+      <!-- PAGINAÇÃO (pronta para o JS marcar a ativa) -->
+      <nav class="paginacao" aria-label="Paginação de notícias">
+        <button class="pg-seta is-disabled" type="button" aria-label="Página anterior" disabled>‹</button>
+
+        <div class="pg-bolinhas" role="tablist" aria-label="Páginas">
+          <button class="pg-bolinha is-active" type="button" aria-label="Página 1" aria-current="page"></button>
+          <button class="pg-bolinha" type="button" aria-label="Página 2"></button>
+          <button class="pg-bolinha" type="button" aria-label="Página 3"></button>
+          <button class="pg-bolinha" type="button" aria-label="Página 4"></button>
+        </div>
+
+        <button class="pg-seta" type="button" aria-label="Próxima página">›</button>
+      </nav>
+    </div>
+
   </div>
 
   <template id="template-mini">
-  <div class="card-mini">
-    <div class="img-wrapper-mini">
-      <img src="" alt="">
+    <div class="card-mini">
+      <div class="img-wrapper-mini">
+        <img src="" alt="">
+      </div>
+      <p></p>
     </div>
-    <p></p>
-  </div>
-</template>
+  </template>
+
 </section>
 
 

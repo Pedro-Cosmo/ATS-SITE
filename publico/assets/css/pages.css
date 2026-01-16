@@ -7,10 +7,15 @@
   box-sizing: border-box;
 }
 
+
 /* ---------------- HEADER ---------------- */
 
 .header{
-  background:#0b3b42;
+  background: linear-gradient(
+    to bottom,
+    #0b3b42 0%,
+    #0a3339 100%
+  );
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
@@ -19,7 +24,8 @@
 }
 
 .header > a{
-  font-size: 1.4rem;
+  font-size: 1.8rem;
+  letter-spacing: 1px;
   font-weight: bold;
   text-decoration: none;
   color: white;
@@ -42,6 +48,7 @@
   background: none;
   border: none;
   color: white;
+
   padding: 10px 14px;
   cursor: pointer;
   text-decoration: none;
@@ -62,12 +69,16 @@
   top: 100%;
   left: 50%;
   transform: translateX(-50%);
+
   width: 180px;
-  background: #0b3b428e;
+ backdrop-filter: blur(6px);
+  background: rgba(11, 59, 66, 0.85);
   padding: 6px 0;
+
   display: none;
   flex-direction: column;
   align-items: stretch;
+
   border-radius: 10px;
   overflow: hidden;
   z-index: 10;
@@ -81,6 +92,7 @@
   display: block;
   width: 100%;
   box-sizing: border-box;
+
   padding: 8px 0;
   text-align: center;
   color: white;
@@ -335,6 +347,79 @@ main {
 }
 
 
+/* ---------------- PAGINAÇÃO — ARTIGOS ---------------- */
+
+.artigos-paginacao{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+
+  padding: 40px 0 60px;
+}
+
+/* Bolinhas */
+
+.pg-bolinhas{
+  display: flex;
+  gap: 10px;
+}
+
+.pg-bolinha{
+  width: 11px;
+  height: 11px;
+  border-radius: 999px;
+
+  border: 1px solid rgba(127, 209, 184, 0.45);
+  background: rgba(255,255,255,0.65);
+
+  cursor: pointer;
+  transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+}
+
+.pg-bolinha:hover{
+  transform: scale(1.2);
+  border-color: #7fd1b8;
+}
+
+/* Página ativa */
+
+.pg-bolinha.is-active{
+  background: #2fb08d;
+  border-color: #2fb08d;
+  transform: scale(1.25);
+}
+
+/* Setas */
+
+.pg-seta{
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+
+  border: 1px solid rgba(127, 209, 184, 0.35);
+  background: rgba(255,255,255,0.75);
+  color: #0f3d32;
+
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+
+.pg-seta:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+  background: #ffffff;
+}
+
+/* Estado desabilitado */
+
+.pg-seta.is-disabled,
+.pg-seta:disabled{
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
 
 
 /* ---------------- FOOTER ---------------- */
