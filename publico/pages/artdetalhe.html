@@ -7,53 +7,57 @@
       <title>Notícia</title>
    </head>
    <body>
-      <!----------------------------cabeçalho --------------------------------->
+
+
+<!----------------------------cabeçalho --------------------------------->
       <header class="header">
-         <a href="/publico/index.html">LIGA-ATS</a>
+         <a href="/publico/index.html" class="logo">
+         <span class="logo-main">LIGA-ATS</span>
+         </a>
          <nav>
             <ul class="menu">
-               <li class="dropdown">
-                  <button class="dropbtn">SOBRE ▾</button>
-                  <ul class="submenu">
-                     <li><a href="/publico/pages/sobrenos.html#liga">LIGA</a></li>
-                     <li><a href="/publico/pages/sobrenos.html#geesfar">GETASF</a></li>
-                  </ul>
-               </li>
                <li class="dropdown">
                   <button class="dropbtn">PUBLICAÇÕES ▾</button>
                   <ul class="submenu">
                      <li><a href="/publico/pages/artigos.html">Artigos</a></li>
                      <li><a href="#">Resumos</a></li>
                      <li><a href="#">Materiais</a></li>
+                     <li><a href="#">Teses e Dissertações</a></li>
+                  </ul>
+               </li>
+               <li><a href="#">NOTÍCIAS</a></li>
+               <li class="dropdown">
+                  <button class="dropbtn">SOBRE ▾</button>
+                  <ul class="submenu">
+                     <li><a href="/publico/pages/sobrenos.html#liga">A Liga</a></li>
+                     <li><a href="/publico/pages/sobrenos.html#geesfar">GEESFAR</a></li>
+                     <li><a href="#">Membros</a></li>
                   </ul>
                </li>
                <li><a href="#">CONTATOS</a></li>
-               <li><a href="#">NOTÍCIAS</a></li>
             </ul>
          </nav>
       </header>
 
 
-<main class="noticia-detalhe">
-  <article class="noticia-corpo">
-    <h1 id="titulo"></h1>
-
-    <div class="noticia-meta">
-      <span id="autor"></span>
-    </div>
-
-    <p id="descricao-longa"></p>
-
-    <a href="/publico/pages/artigos.html" class="voltar">← Voltar</a>
-  </article>
-</main>
+ <!----------------------------main --------------------------------->
 
 
+      <main class="noticia-detalhe">
+         <article class="noticia-corpo">
+            <h1 id="titulo"></h1>
+            <div class="noticia-meta">
+               <span id="autor"></span>
+            </div>
+            <p id="descricao-longa"></p>
+            <a href="/publico/pages/artigos.html" class="voltar">← Voltar</a>
+         </article>
+      </main>
 
 
 
 
-
+<!----------------------------footer --------------------------------->
 
       <footer class="footer">
          <div class="footer-main">
@@ -90,9 +94,7 @@
       </footer>
 
 
-
-
-
+<!----------------------------script --------------------------------->
       <script>
          const params = new URLSearchParams(window.location.search);
          const id = Number(params.get("id"));
@@ -109,5 +111,7 @@
              document.title = noticia.descricaoCurta;
            });
       </script>
+
+      
    </body>
 </html>
