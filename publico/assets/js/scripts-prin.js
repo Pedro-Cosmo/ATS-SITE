@@ -11,7 +11,7 @@ dropdowns.forEach(function(drop) {
 
 
 function carregarMiniNoticias() {
-  fetch("/publico/assets/data/dados.json")
+  fetch("/publico/assets/data/noticias.json")
     .then(res => res.json())
     .then(noticias => {
 
