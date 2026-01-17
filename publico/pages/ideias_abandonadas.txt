@@ -1,8 +1,0 @@
-função para por o nome dos editores
-
-
-if (tagsEl && Array.isArray(artigo.palavrasChave)) {
-        tagsEl.textContent = artigo.palavrasChave
-          .map(tag => `#${tag}`)
-          .join(" ");
-      }

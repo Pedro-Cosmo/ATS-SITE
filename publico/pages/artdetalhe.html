@@ -1,12 +1,12 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
    <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <link rel="stylesheet" href="/publico/assets/css/pages.css">
-      <title>Notícia</title>
+<title>Notícia</title>
    </head>
-   <body>
+   <body class="pagina-noticia">
 
 
 <!----------------------------cabeçalho --------------------------------->
@@ -17,7 +17,7 @@
          <nav>
             <ul class="menu">
                <li class="dropdown">
-                  <button class="dropbtn">PUBLICAÇÕES ▾</button>
+                  <button class="dropbtn">PUBLICAÇÕES </button>
                   <ul class="submenu">
                      <li><a href="/publico/pages/artigos.html">Artigos</a></li>
                      <li><a href="#">Resumos</a></li>
@@ -27,7 +27,7 @@
                </li>
                <li><a href="#">NOTÍCIAS</a></li>
                <li class="dropdown">
-                  <button class="dropbtn">SOBRE ▾</button>
+                  <button class="dropbtn">SOBRE</button>
                   <ul class="submenu">
                      <li><a href="/publico/pages/sobrenos.html#liga">A Liga</a></li>
                      <li><a href="/publico/pages/sobrenos.html#geesfar">GEESFAR</a></li>
@@ -44,14 +44,30 @@
 
 
       <main class="noticia-detalhe">
-         <article class="noticia-corpo">
-            <h1 id="titulo"></h1>
-            <div class="noticia-meta">
-               <span id="autor"></span>
+         <div class="noticia-layout">
+            <div class="noticia-conteudo">
+            <article class="noticia-corpo">
+               <h1 id="titulo"></h1>
+               <div class="noticia-meta">
+                  <span id="autor"></span>
+               </div>
+               <p id="descricao-longa"></p>
+               <a href="/publico/pages/artigos.html" class="voltar">? Voltar</a>
+            </article>
+
+            <aside class="noticia-side">
+               <h3>Mais Notícias</h3>
+               <ul id="related" class="related-list">
+                  <!-- itens relacionados serão inseridos pelo script -->
+               </ul>
+
+               <div class="paginador-bloco">
+                  <p style="font-size:0.95rem;margin:0 0 25px 0">Paginador</p>
+                  <div id="react-pagination">(Componente React aqui)</div>
+               </div>
+            </aside>
             </div>
-            <p id="descricao-longa"></p>
-            <a href="/publico/pages/artigos.html" class="voltar">← Voltar</a>
-         </article>
+         </div>
       </main>
 
 
@@ -68,7 +84,7 @@
                   <img src="./img/im-footer.png" alt="Imagem institucional da Liga">
                </div>
                <p class="footer-address">
-                  Cidade Universitária Macaé – UFRJ
+                  Cidade Universitária Macaé - UFRJ
                </p>
             </div>
             <!-- COLUNA 2: VAZIA -->
@@ -89,27 +105,45 @@
             </div>
          </div>
          <div class="footer-bottom">
-            © Todos os direitos reservados — Pedro Lucas Cosmo Vieira
+            @ Todos os direitos reservados à Pedro Lucas Cosmo Vieira
          </div>
       </footer>
 
 
 <!----------------------------script --------------------------------->
       <script>
-         const params = new URLSearchParams(window.location.search);
-         const id = Number(params.get("id"));
-         
-         fetch("/publico/assets/data/dados.json")
-           .then(res => res.json())
-           .then(noticias => {
-         
-             const noticia = noticias.find(n => n.id === id);
-             if (!noticia) return;
-         
-             document.getElementById("titulo").textContent = noticia.descricaoCurta;
-             document.getElementById("descricao-longa").textContent = noticia.descricaoLonga;
-             document.title = noticia.descricaoCurta;
-           });
+             const params = new URLSearchParams(window.location.search);
+             const id = Number(params.get("id"));
+
+             fetch("/publico/assets/data/noticias.json")
+                .then(res => res.json())
+                .then(noticias => {
+                   const noticia = noticias.find(n => n.id === id);
+                   if (!noticia) return;
+
+                   document.getElementById("titulo").textContent = noticia.descricaoCurta;
+                   document.getElementById("descricao-longa").textContent = noticia.descricaoLonga;
+                   document.title = noticia.descricaoCurta;
+
+                   // preencher autor se existir
+                   const autorEl = document.getElementById("autor");
+                   autorEl.textContent = noticia.autor ? `Por ${noticia.autor}` : "Liga ATS";
+
+                   // popular lista de relacionados (exceto a notícia atual)
+                   const relatedEl = document.getElementById('related');
+                   const others = noticias.filter(n => n.id !== id).slice(0,5);
+                   others.forEach(n => {
+                      const li = document.createElement('li');
+                      const a = document.createElement('a');
+                      a.href = `/publico/pages/artdetalhe.html?id=${n.id}`;
+                      a.textContent = n.descricaoCurta || `Notícia ${n.id}`;
+                      li.appendChild(a);
+                      relatedEl.appendChild(li);
+                   });
+
+                   // Nota: o elemento #react-pagination foi criado como ponto de montagem
+                   // para quando você integrar o componente de paginação em React.
+                });
       </script>
 
       
