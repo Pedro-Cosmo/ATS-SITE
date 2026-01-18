@@ -4,40 +4,13 @@
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <link rel="stylesheet" href="/assets/css/pages.css">
-<title>Notícia</title>
+<title>Notï¿½cia</title>
    </head>
    <body class="pagina-noticia">
 
 
-<!----------------------------cabeçalho --------------------------------->
-      <header class="header">
-         <a href="/index.html" class="logo">
-         <span class="logo-main">LIGA-ATS</span>
-         </a>
-         <nav>
-            <ul class="menu">
-               <li class="dropdown">
-                  <button class="dropbtn">PUBLICAÇÕES </button>
-                  <ul class="submenu">
-                     <li><a href="/pages/artigos.html">Artigos</a></li>
-                     <li><a href="#">Resumos</a></li>
-                     <li><a href="#">Materiais</a></li>
-                     <li><a href="#">Teses e Dissertações</a></li>
-                  </ul>
-               </li>
-               <li><a href="#">NOTÍCIAS</a></li>
-               <li class="dropdown">
-                  <button class="dropbtn">SOBRE</button>
-                  <ul class="submenu">
-                     <li><a href="/pages/sobrenos.html#liga">A Liga</a></li>
-                     <li><a href="/pages/sobrenos.html#geesfar">GEESFAR</a></li>
-                     <li><a href="#">Membros</a></li>
-                  </ul>
-               </li>
-               <li><a href="#">CONTATOS</a></li>
-            </ul>
-         </nav>
-      </header>
+<!----------------------------cabeï¿½alho --------------------------------->
+      <div data-include="/includes/header.html"></div>
 
 
  <!----------------------------main --------------------------------->
@@ -56,9 +29,9 @@
             </article>
 
             <aside class="noticia-side">
-               <h3>Mais Notícias</h3>
+               <h3>Mais Notï¿½cias</h3>
                <ul id="related" class="related-list">
-                  <!-- itens relacionados serão inseridos pelo script -->
+                  <!-- itens relacionados serï¿½o inseridos pelo script -->
                </ul>
 
                <div class="paginador-bloco">
@@ -75,39 +48,9 @@
 
 <!----------------------------footer --------------------------------->
 
-      <footer class="footer">
-         <div class="footer-main">
-            <!-- COLUNA 1: LOGO ESQUERDA -->
-            <div class="footer-col footer-left">
-               <img src="./img/logo-liga.png" alt="Logo da Liga" class="footer-logo">
-               <div class="footer-image-box">
-                  <img src="./img/im-footer.png" alt="Imagem institucional da Liga">
-               </div>
-               <p class="footer-address">
-                  Cidade Universitária Macaé - UFRJ
-               </p>
-            </div>
-            <!-- COLUNA 2: VAZIA -->
-            <div class="footer-spacer"></div>
-            <!-- COLUNA 3: VAZIA -->
-            <div class="footer-spacer"></div>
-            <!-- COLUNA 4: CONTATOS -->
-            <div class="footer-col footer-contacts">
-               <p class="footer-title">Contato</p>
-               <div class="contact-item">Email: contato@ligaats.com</div>
-               <div class="contact-item">Instagram: @liga.ats</div>
-               <div class="contact-item">WhatsApp: (00) 00000-0000</div>
-            </div>
-            <!-- COLUNA 5: LOGOS DIREITA -->
-            <div class="footer-col footer-right-logos">
-               <img src="/assets/data/img/faetec.png" alt="Logo da FAETEC" class="footer-logo-small">
-               <img src="/assets/data/img/ufrj.png" alt="Logo da UFRJ" class="footer-logo-small">
-            </div>
-         </div>
-         <div class="footer-bottom">
-            @ Todos os direitos reservados à Pedro Lucas Cosmo Vieira
-         </div>
-      </footer>
+      <div data-include="/includes/footer.html"></div>
+
+      <script src="/assets/js/include-partials.js"></script>
 
 
 <!----------------------------script --------------------------------->
@@ -129,20 +72,20 @@
                    const autorEl = document.getElementById("autor");
                    autorEl.textContent = noticia.autor ? `Por ${noticia.autor}` : "Liga ATS";
 
-                   // popular lista de relacionados (exceto a notícia atual)
+                   // popular lista de relacionados (exceto a notï¿½cia atual)
                    const relatedEl = document.getElementById('related');
                    const others = noticias.filter(n => n.id !== id).slice(0,5);
                    others.forEach(n => {
                       const li = document.createElement('li');
                       const a = document.createElement('a');
                       a.href = `/pages/noticias-template.html?id=${n.id}`;
-                      a.textContent = n.descricaoCurta || `Notícia ${n.id}`;
+                      a.textContent = n.descricaoCurta || `Notï¿½cia ${n.id}`;
                       li.appendChild(a);
                       relatedEl.appendChild(li);
                    });
 
                    // Nota: o elemento #react-pagination foi criado como ponto de montagem
-                   // para quando você integrar o componente de paginação em React.
+                   // para quando vocï¿½ integrar o componente de paginaï¿½ï¿½o em React.
                 });
       </script>
 

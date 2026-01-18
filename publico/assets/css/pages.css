@@ -152,6 +152,26 @@ main {
   border-radius: 6px;
 }
 
+/* Limitar imagens de bloco quando dentro de .bloco-conteudo (index) */
+.bloco-conteudo .bloco-img img {
+  max-width: 320px;
+  width: 100%;
+  height: auto;
+}
+
+/* Se o conteúdo estiver invertido (imagem à direita), reduzir levemente a largura */
+.bloco-conteudo.reverse .bloco-img img {
+  max-width: 280px;
+}
+
+/* Garantir imagens laterais de artigos não extrapolem */
+.artigo-lateral img,
+.img-wrapper-mini img {
+  max-width: 220px;
+  width: 100%;
+  height: auto;
+}
+
 .bloco-conteudo h2 {
   margin-top: 0;
   font-size: 1.4rem;
@@ -509,6 +529,17 @@ main {
   text-align: center;
   padding: 10px;
   font-size: 0.75rem;
+}
+
+/* Garantir tamanho consistente dos ícones no footer */
+.footer .contact-icon,
+.footer .contact-item img{
+  width: 18px !important;
+  height: 18px !important;
+  max-width: 24px !important;
+  object-fit: contain !important;
+  display: inline-block !important;
+  vertical-align: middle !important;
 }
 
 @media (max-width: 900px){
