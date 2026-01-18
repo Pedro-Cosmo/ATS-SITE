@@ -11,7 +11,7 @@ dropdowns.forEach(function(drop) {
 
 
 function carregarNoticias() {
-  fetch("/publico/assets/data/noticias.json")
+  fetch("/assets/data/noticias.json")
     .then(res => res.json())
     .then(noticias => {
       const grid = document.querySelector("#grid-noticias");
@@ -82,7 +82,7 @@ function carregarNoticias() {
             principalLegenda.textContent = principal.descricaoCurta || principal.titulo || "";
           }
           noticiaPrincipal.onclick = () => {
-            window.location.href = `/publico/pages/noticias-template.html?id=${principal.id}`;
+            window.location.href = `/pages/noticias-template.html?id=${principal.id}`;
           };
         }
 
@@ -101,7 +101,7 @@ function carregarNoticias() {
           }
           if (card) {
             card.addEventListener("click", () => {
-              window.location.href = `/publico/pages/noticias-template.html?id=${noticia.id}`;
+              window.location.href = `/pages/noticias-template.html?id=${noticia.id}`;
             });
           }
 

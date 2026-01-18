@@ -3,7 +3,7 @@
    <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <link rel="stylesheet" href="/publico/assets/css/pages.css">
+      <link rel="stylesheet" href="/assets/css/pages.css">
 <title>Notícia</title>
    </head>
    <body class="pagina-noticia">
@@ -11,7 +11,7 @@
 
 <!----------------------------cabeçalho --------------------------------->
       <header class="header">
-         <a href="/publico/index.html" class="logo">
+         <a href="/index.html" class="logo">
          <span class="logo-main">LIGA-ATS</span>
          </a>
          <nav>
@@ -19,7 +19,7 @@
                <li class="dropdown">
                   <button class="dropbtn">PUBLICAÇÕES </button>
                   <ul class="submenu">
-                     <li><a href="/publico/pages/artigos.html">Artigos</a></li>
+                     <li><a href="/pages/artigos.html">Artigos</a></li>
                      <li><a href="#">Resumos</a></li>
                      <li><a href="#">Materiais</a></li>
                      <li><a href="#">Teses e Dissertações</a></li>
@@ -29,8 +29,8 @@
                <li class="dropdown">
                   <button class="dropbtn">SOBRE</button>
                   <ul class="submenu">
-                     <li><a href="/publico/pages/sobrenos.html#liga">A Liga</a></li>
-                     <li><a href="/publico/pages/sobrenos.html#geesfar">GEESFAR</a></li>
+                     <li><a href="/pages/sobrenos.html#liga">A Liga</a></li>
+                     <li><a href="/pages/sobrenos.html#geesfar">GEESFAR</a></li>
                      <li><a href="#">Membros</a></li>
                   </ul>
                </li>
@@ -52,7 +52,7 @@
                   <span id="autor"></span>
                </div>
                <p id="descricao-longa"></p>
-               <a href="/publico/pages/artigos.html" class="voltar">? Voltar</a>
+               <a href="/pages/artigos.html" class="voltar">? Voltar</a>
             </article>
 
             <aside class="noticia-side">
@@ -100,8 +100,8 @@
             </div>
             <!-- COLUNA 5: LOGOS DIREITA -->
             <div class="footer-col footer-right-logos">
-               <img src="/publico/assets/data/img/faetec.png" alt="Logo da FAETEC" class="footer-logo-small">
-               <img src="/publico/assets/data/img/ufrj.png" alt="Logo da UFRJ" class="footer-logo-small">
+               <img src="/assets/data/img/faetec.png" alt="Logo da FAETEC" class="footer-logo-small">
+               <img src="/assets/data/img/ufrj.png" alt="Logo da UFRJ" class="footer-logo-small">
             </div>
          </div>
          <div class="footer-bottom">
@@ -115,7 +115,7 @@
   const params = new URLSearchParams(window.location.search);
   const id = Number(params.get("id"));
 
-  fetch("/publico/assets/data/dados.json")
+  fetch("/assets/data/dados.json")
     .then(res => res.json())
     .then(artigos => {
       const artigo = artigos.find(a => a.id === id);
@@ -137,7 +137,7 @@
       others.forEach(a => {
         const li = document.createElement("li");
         const link = document.createElement("a");
-        link.href = `/publico/pages/artigo-template.html?id=${a.id}`;
+        link.href = `/pages/artigo-template.html?id=${a.id}`;
         link.textContent = a.titulo || `Artigo ${a.id}`;
         li.appendChild(link);
         relatedEl.appendChild(li);
