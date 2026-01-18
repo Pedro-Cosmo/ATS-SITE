@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
    <head>
       <meta charset="UTF-8">
@@ -112,39 +112,38 @@
 
 <!----------------------------script --------------------------------->
       <script>
-             const params = new URLSearchParams(window.location.search);
-             const id = Number(params.get("id"));
+  const params = new URLSearchParams(window.location.search);
+  const id = Number(params.get("id"));
 
-             fetch("/publico/assets/data/noticias.json")
-                .then(res => res.json())
-                .then(noticias => {
-                   const noticia = noticias.find(n => n.id === id);
-                   if (!noticia) return;
+  fetch("/publico/assets/data/dados.json")
+    .then(res => res.json())
+    .then(artigos => {
+      const artigo = artigos.find(a => a.id === id);
+      if (!artigo) return;
 
-                   document.getElementById("titulo").textContent = noticia.descricaoCurta;
-                   document.getElementById("descricao-longa").textContent = noticia.descricaoLonga;
-                   document.title = noticia.descricaoCurta;
+      document.getElementById("titulo").textContent = artigo.titulo || "Sem titulo";
+      document.getElementById("descricao-longa").textContent = artigo.descricaoLonga || "";
+      document.title = artigo.titulo || "Artigo";
 
-                   // preencher autor se existir
-                   const autorEl = document.getElementById("autor");
-                   autorEl.textContent = noticia.autor ? `Por ${noticia.autor}` : "Liga ATS";
+      const autorEl = document.getElementById("autor");
+      if (autorEl) {
+        autorEl.textContent = Array.isArray(artigo.autores) && artigo.autores.length
+          ? `Autor(es): ${artigo.autores.join(", ")}`
+          : "Liga ATS";
+      }
 
-                   // popular lista de relacionados (exceto a notícia atual)
-                   const relatedEl = document.getElementById('related');
-                   const others = noticias.filter(n => n.id !== id).slice(0,5);
-                   others.forEach(n => {
-                      const li = document.createElement('li');
-                      const a = document.createElement('a');
-                      a.href = `/publico/pages/artdetalhe.html?id=${n.id}`;
-                      a.textContent = n.descricaoCurta || `Notícia ${n.id}`;
-                      li.appendChild(a);
-                      relatedEl.appendChild(li);
-                   });
-
-                   // Nota: o elemento #react-pagination foi criado como ponto de montagem
-                   // para quando você integrar o componente de paginação em React.
-                });
-      </script>
+      const relatedEl = document.getElementById("related");
+      const others = artigos.filter(a => a.id !== id).slice(0, 5);
+      others.forEach(a => {
+        const li = document.createElement("li");
+        const link = document.createElement("a");
+        link.href = `/publico/pages/artigo-template.html?id=${a.id}`;
+        link.textContent = a.titulo || `Artigo ${a.id}`;
+        li.appendChild(link);
+        relatedEl.appendChild(li);
+      });
+    });
+</script>
 
       
    </body>
