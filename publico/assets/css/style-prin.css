@@ -153,6 +153,23 @@
 	}
 }
 
+/* Limits for imagens when used inside bloco-conteudo to avoid large right-side images */
+.bloco-conteudo .bloco-img img {
+	max-width: 320px;
+	width: 100%;
+	height: auto;
+}
+
+.bloco-conteudo.reverse .bloco-img img {
+	max-width: 280px;
+}
+
+.artigo-lateral img {
+	max-width: 220px;
+	width: 100%;
+	height: auto;
+}
+
 /* texto */
 .bloco-texto {
 	flex: 1;
@@ -406,7 +423,7 @@
 .img-wrapper-grande {
 	width: 100%;
 	/* altura grande, mas sem virar um banner infinito */
-	height: 520px;
+	height: 550px;
 	overflow: hidden;
 	border-radius: 16px;
 	box-shadow: 0 16px 34px rgba(0, 0, 0, 0.14);
@@ -419,6 +436,24 @@
 	object-fit: cover;
 	transform: scale(1.02);
 	/* leve, não destrutivo */
+}
+
+/* Sobrepor legenda à imagem principal (barra preta translúcida) */
+.img-wrapper-grande{
+	position: relative;
+}
+
+.img-wrapper-grande .legenda-grande{
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(0,0,0,0.55);
+	color: #fff;
+	padding: 18px 20px;
+	box-sizing: border-box;
+	font-weight: 800;
+	font-size: 1.05rem;
 }
 
 .legenda-grande {
@@ -454,9 +489,9 @@
 
 /* LIMITADOR DA IMAGEM PEQUENA */
 .img-wrapper-mini {
-	width: 100%;
-	height: 190px;
-	overflow: hidden;
+  width: 100%;
+  height: 260px; /* aumentado para imagens um pouco maiores */
+  overflow: hidden;
 }
 
 .img-wrapper-mini img {
@@ -465,11 +500,30 @@
 	object-fit: cover;
 }
 
-.card-mini p {
-	padding: 12px 12px 14px;
+/* Cartões pequenos: legenda sobreposta em fundo preto translúcido */
+.card-mini{
+	position: relative;
+	overflow: hidden;
+}
+
+.card-mini p{
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	margin: 0;
+	background: rgba(0,0,0,0.55);
+	color: #fff;
+	padding: 12px;
+	box-sizing: border-box;
 	font-size: 0.92rem;
+}
+
+.card-mini p {
+	padding: 14px 14px 16px;
+	font-size: 0.96rem;
 	line-height: 1.4;
-	color: #3e4a57;
+	color: #fff; /* legenda sobreposta agora branca */
 }
 
 /* ===== PAGINAÇÃO ===== */
@@ -622,6 +676,31 @@
 	font-size: 0.9rem;
 }
 
+/* Ajustes adicionados para uniformizar o footer com pages.css */
+.footer-logo-small{
+	width: 150px;
+}
+
+.footer-right-logos{
+	align-items: flex-start;
+	gap: 15px;
+}
+
+.footer-bottom{
+	background: #0f1f16;
+	text-align: center;
+	padding: 10px;
+	font-size: 0.75rem;
+}
+
+/* Permite usar uma imagem no link .logo (header) de forma consistente */
+.header .logo img,
+.logo-img{
+	width: 90px;
+	height: auto;
+	display: inline-block;
+}
+
 /* ===== COLUNAS VAZIAS ===== */
 /* ===== CONTATOS ===== */
 .footer-contacts {
@@ -649,4 +728,45 @@
 	width: 18px;
 	height: 18px;
 	object-fit: contain;
+}
+
+/* ===== Pequenas animações (Tailwind-like utilities) ===== */
+@keyframes tw-fade-up {
+	from { opacity: 0; transform: translateY(8px); }
+	to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-up {
+	animation: tw-fade-up 700ms cubic-bezier(.16,.84,.44,1) both;
+}
+
+.animate-delay-150 { animation-delay: 150ms; }
+.animate-delay-300 { animation-delay: 300ms; }
+
+/* Hero placeholder styling */
+.hero-placeholder {
+	min-height: 260px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: linear-gradient(180deg, rgba(10,40,40,0.9), rgba(6,30,30,0.7));
+	color: #fff;
+}
+
+.hero-inner {
+	width: 100%;
+	max-width: 1200px;
+	padding: 28px 18px;
+	text-align: center;
+}
+
+/* Aplicar animação sutil às seções principais */
+.bloco-conteudo.animate-fade-up,
+.sec-container.animate-fade-up {
+	opacity: 0;
+}
+
+/* Ao carregar via JS as classes são aplicadas — aqui é só fallback */
+.bloco-conteudo.animate-fade-up {
+	animation: tw-fade-up 700ms cubic-bezier(.16,.84,.44,1) both;
 }
