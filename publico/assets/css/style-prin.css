@@ -7,95 +7,6 @@
 	box-sizing: border-box;
 }
 
-/* ---------------- HEADER ---------------- */
-.header {
-	background: linear-gradient(to bottom, #0b3b42 0%, #0a3339 100%);
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: space-between;
-	align-items: center;
-	padding: 20px;
-}
-
-.header>a {
-	font-size: 1.8rem;
-	letter-spacing: 1px;
-	font-weight: bold;
-	text-decoration: none;
-	color: white;
-}
-
-.menu {
-	list-style: none;
-	display: flex;
-}
-
-.menu>li {
-	position: relative;
-	margin-left: 15px;
-	display: flex;
-	align-items: center;
-}
-
-.dropbtn,
-.menu>li>a {
-	background: none;
-	border: none;
-	color: white;
-	padding: 10px 14px;
-	cursor: pointer;
-	text-decoration: none;
-	font: inherit;
-	display: block;
-}
-
-.dropbtn:hover,
-.menu>li>a:hover {
-	background: rgba(255, 255, 255, 0.2);
-	border-radius: 6px;
-}
-
-/* ---------- SUBMENU ---------- */
-.submenu {
-	position: absolute;
-	top: 100%;
-	left: 50%;
-	transform: translateX(-50%);
-	width: 180px;
-	backdrop-filter: blur(6px);
-	background: rgba(11, 59, 66, 0.85);
-	padding: 6px 0;
-	display: none;
-	flex-direction: column;
-	align-items: stretch;
-	border-radius: 10px;
-	overflow: hidden;
-	z-index: 10;
-}
-
-.submenu li {
-	width: 100%;
-}
-
-.submenu li a {
-	display: block;
-	width: 100%;
-	box-sizing: border-box;
-	padding: 8px 0;
-	text-align: center;
-	color: white;
-	text-decoration: none;
-}
-
-.submenu li a:hover {
-	background: rgba(255, 255, 255, 0.18);
-}
-
-/* ---------- ABERTURA ---------- */
-.dropdown:hover .submenu {
-	display: flex;
-}
-
 /* ---------------- section 1 e 2 ---------------- */
 .institucional {
 	background: radial-gradient(circle at 0% 0%, #0b3b42 0%, #2f5f5a 60%, #1f3f3a 120%);
@@ -150,6 +61,107 @@
 	.bloco-img img {
 		border-radius: 10px;
 		box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+	}
+}
+
+/* ---------------- COMPOSICAO DE NOTICIAS ---------------- */
+.news-composition {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	width: 100%;
+}
+
+.news-row {
+	display: flex;
+	gap: 10px;
+	width: 100%;
+}
+
+.news-card {
+	position: relative;
+	overflow: hidden;
+	border-radius: 12px;
+	background: #0b1f1a;
+	min-height: 160px;
+	box-shadow: 0 12px 28px rgba(0, 0, 0, 0.16);
+	cursor: pointer;
+}
+
+.news-main {
+	height: 280px;
+}
+
+.news-wide {
+	flex: 2;
+	height: 190px; /* o maior de baixo */
+}
+
+.news-narrow {
+	flex: 1;
+	height: 190px;/* o menor de baixo */
+}
+
+.news-card img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+	max-width: none;
+}
+
+.news-card::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.55);
+	opacity: 0;
+	transition: opacity 0.2s ease;
+}
+
+.news-caption {
+	position: absolute;
+	left: 16px;
+	right: 16px;
+	bottom: 14px;
+	color: #fff;
+	font-size: 0.98rem;
+	font-weight: 600;
+	line-height: 1.35;
+	z-index: 1;
+	opacity: 0;
+	transition: opacity 0.2s ease;
+}
+
+.news-card:hover::after,
+.news-card:hover .news-caption {
+	opacity: 1;
+}
+
+/* Garantir que a composicao nao herde limites de imagem do bloco */
+.bloco-img .news-composition img {
+	max-width: none;
+}
+
+@media (max-width: 900px) {
+	.news-main {
+		height: 220px;
+	}
+
+	.news-wide,
+	.news-narrow {
+		height: 160px;
+	}
+}
+
+@media (max-width: 700px) {
+	.news-row {
+		flex-direction: column;
+	}
+
+	.news-wide,
+	.news-narrow {
+		height: 180px;
 	}
 }
 
@@ -233,6 +245,91 @@
 
 	.bloco-texto {
 		width: 100%;
+	}
+}
+
+/* ---------------- SECAO AREAS ---------------- */
+.sec-areas {
+	background: radial-gradient(900px 420px at 12% 15%, rgba(20, 70, 58, 0.45), transparent 60%),
+		radial-gradient(700px 320px at 88% 85%, rgba(10, 45, 38, 0.45), transparent 60%),
+		linear-gradient(180deg, #1e4d3a 0%, #1caa74 100%);
+	padding: 80px 20px 90px;
+	color: #ffffff;
+}
+
+.areas-inner {
+	max-width: 1200px;
+	margin: 0 auto;
+	text-align: center;
+}
+
+.areas-inner h2 {
+	font-size: 2.6rem;
+	letter-spacing: 2px;
+	margin-bottom: 40px;
+}
+
+.areas-grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 28px;
+}
+
+.area-card {
+	background: #ffffff;
+	color: #1a2b24;
+	border-radius: 18px;
+	padding: 16px 18px 22px;
+	box-shadow: 0 16px 28px rgba(0, 0, 0, 0.18);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 14px;
+	min-height: 320px;
+	text-decoration: none;
+	width: 100%;
+	cursor: pointer;
+}
+
+.area-img {
+	width: 100%;
+	height: 150px;
+	border-radius: 14px;
+	overflow: hidden;
+}
+
+.area-img img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
+.area-body h3 {
+	margin: 0;
+	font-size: 1.05rem;
+	letter-spacing: 1px;
+}
+
+.area-body p {
+	margin: 6px 0 0;
+	font-size: 0.95rem;
+	color: #4b5b55;
+}
+
+.area-arrow {
+	margin-top: auto;
+	font-size: 1.2rem;
+	color: #2b7a5a;
+}
+
+@media (max-width: 900px) {
+	.areas-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.area-card {
+		min-height: auto;
 	}
 }
 
@@ -622,114 +719,6 @@
 	}
 }
 
-/* ---------------- section 5---------------- */
-.footer {
-	background: #1e3a2a;
-	color: white;
-	margin-top: 100px;
-	width: 100%;
-	overflow: hidden;
-	/* Previne overflow */
-}
-
-.footer-main {
-	width: 100%;
-	padding: 30px 30px;
-	/* Padding igual em todos os lados */
-	display: grid;
-	grid-template-columns: auto 1fr 1fr auto auto;
-	align-items: start;
-	gap: 30px;
-	/* Remove max-width e margin auto para ficar colado nas bordas */
-}
-
-.footer-col {
-	display: flex;
-	flex-direction: column;
-	gap: 12px;
-}
-
-/* ===== COLUNA 1 ===== */
-.footer-left {
-	align-items: flex-start;
-	text-align: left;
-}
-
-.footer-logo {
-	width: 80px;
-}
-
-.footer-image-box {
-	width: 180px;
-	height: 90px;
-	overflow: hidden;
-	border-radius: 8px;
-}
-
-.footer-image-box img {
-	width: 100%;
-	height: 100%;
-	object-fit: cover;
-}
-
-.footer-address {
-	font-size: 0.9rem;
-}
-
-/* Ajustes adicionados para uniformizar o footer com pages.css */
-.footer-logo-small{
-	width: 150px;
-}
-
-.footer-right-logos{
-	align-items: flex-start;
-	gap: 15px;
-}
-
-.footer-bottom{
-	background: #0f1f16;
-	text-align: center;
-	padding: 10px;
-	font-size: 0.75rem;
-}
-
-/* Permite usar uma imagem no link .logo (header) de forma consistente */
-.header .logo img,
-.logo-img{
-	width: 90px;
-	height: auto;
-	display: inline-block;
-}
-
-/* ===== COLUNAS VAZIAS ===== */
-/* ===== CONTATOS ===== */
-.footer-contacts {
-	align-items: flex-start;
-	text-align: left;
-}
-
-.footer-title {
-	font-weight: bold;
-	margin-bottom: 6px;
-	display: flex;
-	align-items: center;
-	gap: 8px;
-}
-
-.contact-item {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	/* futuro ??cone */
-	font-size: 0.9rem;
-}
-
-.contact-icon {
-	width: 18px;
-	height: 18px;
-	object-fit: contain;
-}
-
 /* ===== Pequenas animações (Tailwind-like utilities) ===== */
 @keyframes tw-fade-up {
 	from { opacity: 0; transform: translateY(8px); }
@@ -745,19 +734,27 @@
 
 /* Hero placeholder styling */
 .hero-placeholder {
-	min-height: 260px;
+	min-height: 200px;
 	display: flex;
-	align-items: center;
+	align-items: stretch;
 	justify-content: center;
 	background: linear-gradient(180deg, rgba(10,40,40,0.9), rgba(6,30,30,0.7));
 	color: #fff;
+	padding: 0;
 }
 
 .hero-inner {
 	width: 100%;
-	max-width: 1200px;
-	padding: 28px 18px;
+	max-width: none;
+	padding: 0;
 	text-align: center;
+}
+
+.hero-img {
+	width: 100%;
+	height: 100%;
+	display: block;
+	object-fit: cover;
 }
 
 /* Aplicar animação sutil às seções principais */
