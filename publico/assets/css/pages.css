@@ -489,11 +489,11 @@ body.pagina-noticia .noticia-corpo {
 /* aside real, colado a direita */
 body.pagina-noticia aside.noticia-side {
   width: 100%;
-  background: #ffffff;
+  background: #f7fbf9;
   padding: 18px;
-  border-radius: 10px;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.06);
+  border-radius: 12px;
+  border: 1px solid rgba(15, 63, 50, 0.12);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
 }
 
 body.pagina-noticia aside.noticia-side h3 {
@@ -512,21 +512,22 @@ body.pagina-noticia .related-list {
 }
 
 body.pagina-noticia .related-list li {
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 body.pagina-noticia .related-list a {
   display: block;
   padding: 10px 12px;
   border-radius: 8px;
-  background: #f4f7f6;
+  background: #ffffff;
   color: #1b2b25;
   text-decoration: none;
   transition: background 0.2s ease, transform 0.2s ease;
+  border: 1px solid rgba(15, 63, 50, 0.08);
 }
 
 body.pagina-noticia .related-list a:hover {
-  background: #e6efec;
+  background: #e9f2ee;
   transform: translateY(-1px);
 }
 
@@ -538,8 +539,8 @@ body.pagina-noticia .voltar {
 
 /* bloco do paginador */
 body.pagina-noticia .paginador-bloco {
-  margin-top: 20px;
-  padding-top: 14px;
+  margin-top: 16px;
+  padding-top: 12px;
   border-top: 1px solid #e5e7eb;
 }
 
