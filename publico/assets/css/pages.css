@@ -544,6 +544,75 @@ body.pagina-noticia .paginador-bloco {
   border-top: 1px solid #e5e7eb;
 }
 
+/* ---------------- PAGINAS SIMPLES ---------------- */
+.pagina-lista {
+  background: radial-gradient(
+    circle at 0% 0%,
+    #0b3b42 0%,
+    #2f5f5a 60%,
+    #1f3f3a 120%
+  );
+  color: #0b1f1a;
+}
+
+.pagina-hero {
+  padding: 48px 16px 32px;
+  text-align: center;
+  color: #f1f6f4;
+}
+
+.pagina-hero-inner {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.pagina-hero h1 {
+  font-size: 2.2rem;
+  margin-bottom: 12px;
+  letter-spacing: 1px;
+}
+
+.pagina-hero p {
+  font-size: 1rem;
+  color: rgba(241, 246, 244, 0.9);
+}
+
+.pagina-conteudo {
+  padding: 0 16px 70px;
+  display: flex;
+  justify-content: center;
+}
+
+.pagina-card {
+  max-width: 760px;
+  width: 100%;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 24px;
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.12);
+}
+
+.pagina-card h2 {
+  margin: 0 0 10px;
+  color: #0f3d32;
+}
+
+.pagina-card p {
+  margin: 0;
+  color: #2d3a36;
+  line-height: 1.6;
+}
+
+@media (max-width: 700px) {
+  .pagina-hero {
+    padding: 36px 14px 24px;
+  }
+
+  .pagina-hero h1 {
+    font-size: 1.8rem;
+  }
+}
+
 /* responsivo */
 @media (max-width: 800px) {
   body.pagina-noticia .noticia-conteudo {
