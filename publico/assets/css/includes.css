@@ -1,0 +1,284 @@
+/* ---------------- HEADER ---------------- */
+.header {
+  background: linear-gradient(to bottom, #0b3b42 0%, #0a3339 100%);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+}
+
+.header > a {
+  font-size: 1.8rem;
+  letter-spacing: 1px;
+  font-weight: bold;
+  text-decoration: none;
+  color: white;
+}
+
+.header .logo-text {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.6rem;
+  letter-spacing: 2px;
+  font-weight: 700;
+  color: #0b0b0b;
+  background: #f5f1e8;
+  padding: 6px 12px;
+  border-radius: 8px;
+  display: inline-block;
+}
+
+.header .logo img,
+.logo-img {
+  width: 90px;
+  height: auto;
+  display: inline-block;
+}
+
+.menu {
+  list-style: none;
+  display: flex;
+}
+
+.menu > li {
+  position: relative;
+  margin-left: 15px;
+  display: flex;
+  align-items: center;
+}
+
+.dropbtn,
+.menu > li > a {
+  background: none;
+  border: none;
+  color: white;
+  padding: 10px 14px;
+  cursor: pointer;
+  text-decoration: none;
+  font: inherit;
+  display: block;
+}
+
+.dropbtn:hover,
+.menu > li > a:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+}
+
+/* ---------- SUBMENU ---------- */
+.submenu {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 180px;
+  backdrop-filter: blur(6px);
+  background: rgba(11, 59, 66, 0.85);
+  padding: 6px 0;
+  display: none;
+  flex-direction: column;
+  align-items: stretch;
+  border-radius: 10px;
+  overflow: hidden;
+  z-index: 10;
+}
+
+.submenu li {
+  width: 100%;
+}
+
+.submenu li a {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 0;
+  text-align: center;
+  color: white;
+  text-decoration: none;
+}
+
+.submenu li a:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+/* ---------- ABERTURA ---------- */
+.dropdown:hover .submenu,
+.dropdown.open .submenu {
+  display: flex;
+}
+
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  padding: 6px;
+  cursor: pointer;
+}
+
+.menu-toggle img {
+  width: 28px;
+  height: auto;
+  display: block;
+}
+
+@media (max-width: 800px) {
+  .menu-toggle {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .header nav {
+    width: 100%;
+  }
+
+  .menu {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    margin-top: 12px;
+    background: rgba(11, 59, 66, 0.95);
+    border-radius: 10px;
+  }
+
+  .header.menu-open .menu {
+    display: flex;
+  }
+
+  .menu > li {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .dropbtn,
+  .menu > li > a {
+    width: 100%;
+    text-align: left;
+    padding: 12px 14px;
+  }
+
+  .submenu {
+    position: static;
+    transform: none;
+    width: 100%;
+    backdrop-filter: none;
+    background: rgba(11, 59, 66, 0.85);
+    border-radius: 0;
+  }
+
+  .submenu li a {
+    text-align: left;
+    padding: 10px 14px;
+  }
+}
+
+/* ---------------- FOOTER ---------------- */
+.footer {
+  background: #1e3a2a;
+  color: white;
+  margin-top: 100px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.footer-main {
+  width: 100%;
+  padding: 30px;
+  display: grid;
+  grid-template-columns: auto 1fr 1fr auto auto;
+  align-items: start;
+  gap: 30px;
+}
+
+.footer-col {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.footer-left {
+  align-items: flex-start;
+  text-align: left;
+}
+
+.footer-logo {
+  width: 80px;
+}
+
+.footer-image-box {
+  width: 180px;
+  height: 90px;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.footer-image-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.footer-address {
+  font-size: 0.9rem;
+}
+
+.footer-contacts {
+  align-items: flex-start;
+  text-align: left;
+}
+
+.footer-title {
+  font-weight: bold;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+}
+
+.contact-icon {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+}
+
+.footer-right-logos {
+  align-items: flex-start;
+  gap: 15px;
+}
+
+.footer-logo-small {
+  width: 150px;
+}
+
+.footer-contacts,
+.footer-right-logos {
+  justify-self: end;
+}
+
+.footer-bottom {
+  background: #0f1f16;
+  text-align: center;
+  padding: 10px;
+  font-size: 0.75rem;
+}
+
+@media (max-width: 900px) {
+  .footer-main {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: 30px;
+  }
+
+  .footer-left,
+  .footer-contacts,
+  .footer-right-logos {
+    align-items: center;
+    text-align: center;
+  }
+}
