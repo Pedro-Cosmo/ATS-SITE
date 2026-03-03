@@ -1,30 +1,253 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teses e Dissertacoes</title>
-    <link rel="stylesheet" href="/assets/css/includes.css">
-    <link rel="stylesheet" href="/assets/css/pages.css">
-  </head>
-  <body class="pagina-lista">
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>TCCs</title>
+      <link rel="stylesheet" href="/assets/css/includes.css">
+      <link rel="stylesheet" href="/assets/css/pages.css">
+   </head>
+   <body class="artigos">
+     <!----------------------------cabeçalho (include) --------------------------------->
     <div data-include="/includes/header.html"></div>
 
-    <section class="pagina-hero">
-      <div class="pagina-hero-inner">
-        <h1>Teses e Dissertacoes</h1>
-        <p>Repositorio para trabalhos completos de pos-graduacao.</p>
-      </div>
-    </section>
 
-    <main class="pagina-conteudo">
-      <div class="pagina-card">
-        <h2>Em breve</h2>
-        <p>Esta pagina vai reunir teses e dissertacoes da Liga.</p>
+      <div class="faixa-titulo">
+         <h1>Trabalhos de Conclusão de Curso (TCC)</h1>
       </div>
-    </main>
 
-    <div data-include="/includes/footer.html"></div>
-    <script src="/assets/js/include-partials.js"></script>
-  </body>
+
+      <main class="artigos-container" id="tcc-container">
+         <!-- lista gerada via JS --> 
+      </main>
+
+<nav class="artigos-paginacao" aria-label="Paginação de TCCs">
+  <button class="pg-seta is-disabled" type="button" disabled aria-label="Página anterior">
+    ‹
+  </button>
+
+  <div class="pg-bolinhas">
+    <button class="pg-bolinha is-active" type="button" aria-current="page" aria-label="Página 1"></button>
+    <button class="pg-bolinha" type="button" aria-label="Página 2"></button>
+    <button class="pg-bolinha" type="button" aria-label="Página 3"></button>
+    <button class="pg-bolinha" type="button" aria-label="Página 4"></button>
+  </div>
+
+  <button class="pg-seta" type="button" aria-label="Próxima página">
+    ›
+  </button>
+</nav>
+
+   <template id="template-tcc">
+  <section class="artigo-card">
+
+    <div class="artigo-lateral">
+      <img src="" alt="">
+      <a class="btn-pdf" href="" download>Baixar PDF</a>
+    </div>
+
+    <div class="artigo-conteudo">
+      <h2></h2>
+      <p class="descricao"></p>
+
+      <div class="artigo-rodape">
+        <div class="meta">
+          <span class="autor"></span>
+          <span class="tags"></span>
+        </div>
+
+        <button class="btn-detalhe">Abrir PDF</button>
+      </div>
+    </div>
+
+  </section>
+</template>
+
+
+
+
+      <!----------------------------SEÇÃO FOOTER (include)------------------------------------>
+      <div data-include="/includes/footer.html"></div>
+
+      <script src="/assets/js/include-partials.js"></script>
+
+<script>
+fetch("/assets/data/tcc.json")
+  .then(res => res.json())
+  .then(dados => {
+
+    const tccs = Array.isArray(dados)
+      ? dados.filter(item => !item.tipo || item.tipo === "tcc")
+      : [];
+
+    const extrairAno = (valor) => {
+      if (!valor) return 0;
+      const match = String(valor).match(/\d{4}/);
+      return match ? Number(match[0]) : 0;
+    };
+
+    tccs.sort((a, b) => {
+      const anoA = extrairAno(a.ano);
+      const anoB = extrairAno(b.ano);
+      if (anoA !== anoB) return anoB - anoA;
+      return (a.titulo || "").localeCompare(b.titulo || "", "pt-BR");
+    });
+
+    const container = document.getElementById("tcc-container");
+    const template = document.getElementById("template-tcc");
+    const paginacao = document.querySelector(".artigos-paginacao");
+    const bolinhas = paginacao ? paginacao.querySelector(".pg-bolinhas") : null;
+    const setas = paginacao ? paginacao.querySelectorAll(".pg-seta") : [];
+    const setaAnterior = setas[0] || null;
+    const setaProxima = setas[1] || null;
+    const porPagina = 10;
+    const totalPaginas = Math.max(1, Math.ceil(tccs.length / porPagina));
+    const params = new URLSearchParams(window.location.search);
+    let paginaAtual = Number.parseInt(params.get("page") || "1", 10);
+
+    if (Number.isNaN(paginaAtual) || paginaAtual < 1) {
+      paginaAtual = 1;
+    }
+    if (paginaAtual > totalPaginas) {
+      paginaAtual = totalPaginas;
+    }
+
+    if (!container || !template) return;
+
+    const atualizarUrl = (pagina) => {
+      const novaUrl = new URL(window.location.href);
+      novaUrl.searchParams.set("page", String(pagina));
+      window.history.replaceState({}, "", novaUrl.toString());
+    };
+
+    const renderBolinhas = () => {
+      if (!bolinhas) return;
+      bolinhas.innerHTML = "";
+
+      for (let i = 1; i <= totalPaginas; i += 1) {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = `pg-bolinha${i === paginaAtual ? " is-active" : ""}`;
+        btn.setAttribute("aria-label", `Página ${i}`);
+        if (i === paginaAtual) {
+          btn.setAttribute("aria-current", "page");
+        }
+        btn.addEventListener("click", () => {
+          paginaAtual = i;
+          renderPagina();
+        });
+        bolinhas.appendChild(btn);
+      }
+    };
+
+    const atualizarSetas = () => {
+      if (setaAnterior) {
+        const desativar = paginaAtual <= 1;
+        setaAnterior.disabled = desativar;
+        setaAnterior.classList.toggle("is-disabled", desativar);
+      }
+      if (setaProxima) {
+        const desativar = paginaAtual >= totalPaginas;
+        setaProxima.disabled = desativar;
+        setaProxima.classList.toggle("is-disabled", desativar);
+      }
+    };
+
+    const renderPagina = () => {
+      container.innerHTML = "";
+      atualizarUrl(paginaAtual);
+
+      const inicio = (paginaAtual - 1) * porPagina;
+      const fim = inicio + porPagina;
+
+      tccs.slice(inicio, fim).forEach(tcc => {
+
+        const clone = template.content.cloneNode(true);
+
+        const img = clone.querySelector("img");
+        const h2 = clone.querySelector("h2");
+        const p = clone.querySelector(".descricao");
+        const linkPdf = clone.querySelector(".btn-pdf");
+        const btnDetalhe = clone.querySelector(".btn-detalhe");
+        const autorEl = clone.querySelector(".autor");
+        const tagsEl = clone.querySelector(".tags");
+
+        if (img) {
+          img.src = tcc.imagem || "/assets/data/img/logo.png";
+          img.alt = tcc.titulo || "Imagem do TCC";
+        }
+
+        if (h2) {
+          h2.textContent = tcc.titulo || "Sem título";
+        }
+
+        if (p) {
+          const descricao = [tcc.descricaoLonga, tcc.descricaoCurta]
+            .find(texto => typeof texto === "string" && texto.trim());
+          if (descricao) {
+            p.textContent = descricao;
+            p.style.display = "";
+          } else {
+            p.textContent = "";
+            p.style.display = "none";
+          }
+        }
+
+        if (linkPdf) {
+          linkPdf.href = tcc.pdf ? encodeURI(tcc.pdf) : "#";
+        }
+
+        if (autorEl) {
+          if (Array.isArray(tcc.autores) && tcc.autores.length) {
+            autorEl.textContent = `Autor(es): ${tcc.autores.join(", ")}`;
+          } else {
+            autorEl.textContent = "";
+          }
+        }
+
+        if (tagsEl) {
+          tagsEl.textContent = tcc.ano ? String(tcc.ano) : "Ano não informado";
+        }
+
+        if (btnDetalhe) {
+          btnDetalhe.addEventListener("click", () => {
+            if (tcc.pdf) {
+              window.open(encodeURI(tcc.pdf), "_blank");
+            }
+          });
+        }
+
+        container.appendChild(clone);
+      });
+
+      renderBolinhas();
+      atualizarSetas();
+    };
+
+    if (setaAnterior) {
+      setaAnterior.addEventListener("click", () => {
+        if (paginaAtual > 1) {
+          paginaAtual -= 1;
+          renderPagina();
+        }
+      });
+    }
+
+    if (setaProxima) {
+      setaProxima.addEventListener("click", () => {
+        if (paginaAtual < totalPaginas) {
+          paginaAtual += 1;
+          renderPagina();
+        }
+      });
+    }
+
+    renderPagina();
+
+  })
+  .catch(err => console.error("Erro ao carregar TCCs:", err));
+</script>
+
+
+   </body>
 </html>
