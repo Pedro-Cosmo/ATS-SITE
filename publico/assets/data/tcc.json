@@ -1,0 +1,56 @@
+﻿[
+    {
+        "id":  1,
+        "titulo":  "ACEITABILIDADE E DISPOSIÇÃO A PAGAR POR UMA VACINA HIPOTÉTICA CONTRA O HIV NO ESTADO DO RIO DE JANEIRO UM ESTUDO TRANSVERSAL",
+        "pdf":  "/assets/data/files-pdf/TCC/ACEITABILIDADE E DISPOSIÇÃO A PAGAR POR UMA VACINA HIPOTÉTICA CONTRA O HIV NO ESTADO DO RIO DE JANEIRO UM ESTUDO TRANSVERSAL.pdf",
+        "ano":  null,
+        "tipo":  "tcc",
+        "descricaoCurta":  "",
+        "descricaoLonga":  ""
+    },
+    {
+        "id":  2,
+        "titulo":  "ACESSO E QUALIDADE DOS SERVIÇOS DE SAÚDE DO SUS NA REGIÃO DOS LAGOS DO RIO DE JANEIRO_ UM ESTUDO TRANSVERSAL SOBRE A PERSPECTIVA DOS USUÁRIOS E OS DESAFIOS DA GESTÃO EM SAÚDE",
+        "pdf":  "/assets/data/files-pdf/TCC/ACESSO E QUALIDADE DOS SERVIÇOS DE SAÚDE DO SUS NA REGIÃO DOS LAGOS DO RIO DE JANEIRO_ UM ESTUDO TRANSVERSAL SOBRE A PERSPECTIVA DOS USUÁRIOS E OS DESAFIOS DA GESTÃO EM SAÚDE.pdf",
+        "ano":  null,
+        "tipo":  "tcc",
+        "descricaoCurta":  "",
+        "descricaoLonga":  ""
+    },
+    {
+        "id":  3,
+        "titulo":  "Acesso e Qualidade dos Serviços do Sistema Único de Saúde na perspectiva dos usuários um Estudo Transversal no Estado do Rio de Janeiro",
+        "pdf":  "/assets/data/files-pdf/TCC/Acesso e Qualidade dos Serviços do Sistema Único de Saúde na perspectiva dos usuários um Estudo Transversal no Estado do Rio de Janeiro.pdf",
+        "ano":  null,
+        "tipo":  "tcc",
+        "descricaoCurta":  "",
+        "descricaoLonga":  ""
+    },
+    {
+        "id":  4,
+        "titulo":  "AVALIAÇÃO DO ACESSO E QUALIDADE DOS SERVIÇOS EM SAÚDE DO SUS NA REGIÃO NORTE FLUMINENSE DO ESTADO DO RIO DE JANEIRO UM ESTUDO TRANSVERSAL NA PERSPECTIVA DOS USUÁRIOS",
+        "pdf":  "/assets/data/files-pdf/TCC/AVALIAÇÃO DO ACESSO E QUALIDADE DOS SERVIÇOS EM SAÚDE DO SUS NA REGIÃO NORTE FLUMINENSE DO ESTADO DO RIO DE JANEIRO UM ESTUDO TRANSVERSAL NA PERSPECTIVA DOS USUÁRIOS.pdf",
+        "ano":  null,
+        "tipo":  "tcc",
+        "descricaoCurta":  "",
+        "descricaoLonga":  ""
+    },
+    {
+        "id":  5,
+        "titulo":  "FINANCIAMENTO DA SAÚDE PÚBLICA NO BRASIL PANORAMA, DESAFIOS E REFLEXÕES 2019-2022",
+        "pdf":  "/assets/data/files-pdf/TCC/FINANCIAMENTO DA SAÚDE PÚBLICA NO BRASIL PANORAMA, DESAFIOS E REFLEXÕES 2019-2022.pdf",
+        "ano":  "2019–2022",
+        "tipo":  "tcc",
+        "descricaoCurta":  "",
+        "descricaoLonga":  ""
+    },
+    {
+        "id":  6,
+        "titulo":  "FINANCIAMENTO DA SAÚDE PÚBLICA NO ESTADO DO RIO DE JANEIRO PANORAMA, REFLEXÕES E DESAFIOS 2015 2018",
+        "pdf":  "/assets/data/files-pdf/TCC/FINANCIAMENTO DA SAÚDE PÚBLICA NO ESTADO DO RIO DE JANEIRO PANORAMA, REFLEXÕES E DESAFIOS 2015 2018.pdf",
+        "ano":  "2015–2018",
+        "tipo":  "tcc",
+        "descricaoCurta":  "",
+        "descricaoLonga":  ""
+    }
+]

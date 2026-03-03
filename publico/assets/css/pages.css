@@ -245,8 +245,15 @@ main {
 }
 
 .meta .tags {
-  font-size: 0.6rem;
-  opacity: 0.7;
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #e6f7f1;
+  color: #0f3d32;
+  font-size: 0.7rem;
+  font-weight: 600;
+  opacity: 1;
 }
 
 .artigo-rodape {
@@ -259,6 +266,15 @@ main {
 .meta {
   font-size: 0.65rem;
   color: #6b7280;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.meta .autor:empty,
+.meta .tags:empty {
+  display: none;
 }
 
 .btn-detalhe {

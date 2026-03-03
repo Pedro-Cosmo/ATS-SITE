@@ -56,7 +56,7 @@
           <span class="tags"></span>
         </div>
 
-        <button class="btn-detalhe">Ler mais</button>
+        <button class="btn-detalhe">Abrir PDF</button>
       </div>
     </div>
 
@@ -76,6 +76,17 @@ fetch("/assets/data/dados.json")
   .then(res => res.json())
   .then(dados => {
 
+    const artigos = Array.isArray(dados)
+      ? dados.filter(item => !item.tipo || item.tipo === "artigo")
+      : [];
+
+    artigos.sort((a, b) => {
+      const anoA = Number(a.ano) || 0;
+      const anoB = Number(b.ano) || 0;
+      if (anoA !== anoB) return anoB - anoA;
+      return (a.titulo || "").localeCompare(b.titulo || "", "pt-BR");
+    });
+
     const container = document.getElementById("artigos-container");
     const template = document.getElementById("template-artigo");
     const paginacao = document.querySelector(".artigos-paginacao");
@@ -84,7 +95,7 @@ fetch("/assets/data/dados.json")
     const setaAnterior = setas[0] || null;
     const setaProxima = setas[1] || null;
     const porPagina = 10;
-    const totalPaginas = Math.max(1, Math.ceil(dados.length / porPagina));
+    const totalPaginas = Math.max(1, Math.ceil(artigos.length / porPagina));
     const params = new URLSearchParams(window.location.search);
     let paginaAtual = Number.parseInt(params.get("page") || "1", 10);
 
@@ -143,7 +154,7 @@ fetch("/assets/data/dados.json")
       const inicio = (paginaAtual - 1) * porPagina;
       const fim = inicio + porPagina;
 
-      dados.slice(inicio, fim).forEach(artigo => {
+      artigos.slice(inicio, fim).forEach(artigo => {
 
         const clone = template.content.cloneNode(true);
 
@@ -156,7 +167,7 @@ fetch("/assets/data/dados.json")
         const tagsEl = clone.querySelector(".tags");
 
         if (img) {
-          img.src = artigo.imagem || "";
+          img.src = artigo.imagem || "/assets/data/img/logo.png";
           img.alt = artigo.titulo || "Imagem do artigo";
         }
 
@@ -165,20 +176,38 @@ fetch("/assets/data/dados.json")
         }
 
         if (p) {
-          p.textContent = artigo.descricaoLonga || "Descri��ǜo nǜo dispon��vel.";
+          const descricao = [artigo.descricaoLonga, artigo.descricaoCurta]
+            .find(texto => typeof texto === "string" && texto.trim());
+          if (descricao) {
+            p.textContent = descricao;
+            p.style.display = "";
+          } else {
+            p.textContent = "";
+            p.style.display = "none";
+          }
         }
 
         if (linkPdf) {
-          linkPdf.href = artigo.pdf || "#";
+          linkPdf.href = artigo.pdf ? encodeURI(artigo.pdf) : "#";
         }
 
-        if (autorEl && Array.isArray(artigo.autores)) {
-          autorEl.textContent = `Autor(s):  ${artigo.autores.join(", ")}`;
+        if (autorEl) {
+          if (Array.isArray(artigo.autores) && artigo.autores.length) {
+            autorEl.textContent = `Autor(es): ${artigo.autores.join(", ")}`;
+          } else {
+            autorEl.textContent = "";
+          }
+        }
+
+        if (tagsEl) {
+          tagsEl.textContent = artigo.ano ? String(artigo.ano) : "";
         }
 
         if (btnDetalhe) {
           btnDetalhe.addEventListener("click", () => {
-            window.location.href = `/pages/artigo-template.html?id=${artigo.id}`;
+            if (artigo.pdf) {
+              window.open(encodeURI(artigo.pdf), "_blank");
+            }
           });
         }
 
