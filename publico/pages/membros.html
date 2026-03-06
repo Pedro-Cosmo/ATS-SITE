@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Membros | LIGA ACADÊMICA</title>
+  <link rel="stylesheet" href="/assets/css/includes.css">
+  <link rel="stylesheet" href="/assets/css/pages.css">
+</head>
+<body class="membros-page">
+  <!----------------------------cabeçalho (include) --------------------------------->
+  <div data-include="/includes/header.html"></div>
+
+  <main class="membros-main">
+    <section class="membros-intro" aria-labelledby="titulo-membros">
+      <h1 id="titulo-membros">Membros</h1>
+      <p>Hall da equipe acadêmica da LIGA ATS.</p>
+    </section>
+
+    <section class="membros-hall" aria-label="Lista de membros">
+      <div class="membros-grid" id="membros-grid"></div>
+    </section>
+  </main>
+
+  <template id="template-membro">
+    <article class="membro-card">
+      <div class="membro-foto-wrap">
+        <img class="membro-foto" src="" alt="" loading="lazy" decoding="async">
+      </div>
+      <h2 class="membro-nome"></h2>
+    </article>
+  </template>
+
+  <!----------------------------SEÇÃO FOOTER (include)------------------------------------>
+  <div data-include="/includes/footer.html"></div>
+
+  <script src="/assets/js/include-partials.js"></script>
+  <script src="/assets/js/membros.js"></script>
+</body>
+</html>

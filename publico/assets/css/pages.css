@@ -640,3 +640,159 @@ body.pagina-noticia .paginador-bloco {
     width: 100%;
   }
 }
+
+/* ---------------- MEMBROS ---------------- */
+.membros-page {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: radial-gradient(
+    circle at 0% 0%,
+    #0b3b42 0%,
+    #2f5f5a 60%,
+    #1f3f3a 120%
+  );
+  color: #eaf4ef;
+}
+
+.membros-main {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 42px 16px 70px;
+}
+
+.membros-intro {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.membros-intro h1 {
+  margin: 0 0 8px;
+  font-size: 2.1rem;
+  letter-spacing: 1px;
+}
+
+.membros-intro p {
+  margin: 0;
+  font-size: 1rem;
+  color: rgba(234, 244, 239, 0.9);
+}
+
+.membros-hall {
+  width: 100%;
+}
+
+.membros-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.membro-card {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 14px;
+  border: 1px solid rgba(20, 62, 54, 0.18);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.14);
+  padding: 18px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+}
+
+.membro-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  border-radius: 14px 14px 0 0;
+  background: linear-gradient(90deg, #2f7f66, #5ea888);
+}
+
+.membro-foto-wrap {
+  width: 132px;
+  height: 132px;
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
+  background: #dce9e2;
+  border: 2px solid rgba(47, 95, 90, 0.28);
+}
+
+.membro-foto-wrap::after {
+  content: attr(data-iniciais);
+  position: absolute;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  color: #1f3f3a;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.membro-foto-wrap.sem-imagem::after {
+  display: flex;
+}
+
+.membro-foto {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.membro-foto-wrap.sem-imagem .membro-foto {
+  display: none;
+}
+
+.membro-nome {
+  margin: 0;
+  text-align: center;
+  color: #16352d;
+  font-size: 1rem;
+  line-height: 1.35;
+  font-weight: 700;
+}
+
+.membros-vazio {
+  background: rgba(255, 255, 255, 0.9);
+  color: #1b3f36;
+  border-radius: 10px;
+  padding: 16px;
+  text-align: center;
+}
+
+@media (max-width: 1020px) {
+  .membros-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .membros-main {
+    padding: 34px 14px 56px;
+  }
+
+  .membros-intro h1 {
+    font-size: 1.8rem;
+  }
+
+  .membros-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .membro-foto-wrap {
+    width: 108px;
+    height: 108px;
+  }
+}
+
+@media (max-width: 460px) {
+  .membros-grid {
+    grid-template-columns: 1fr;
+  }
+}
