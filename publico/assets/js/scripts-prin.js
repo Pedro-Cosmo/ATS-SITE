@@ -1,5 +1,5 @@
 function carregarNoticias() {
-  fetch("/assets/data/noticias.json")
+  fetch("/assets/data/noticias.json", { cache: "force-cache" })
     .then(res => res.json())
     .then(noticias => {
       const grid = document.querySelector("#grid-noticias");
@@ -63,6 +63,8 @@ function carregarNoticias() {
 
         if (principal) {
           if (principalImg) {
+            principalImg.loading = "lazy";
+            principalImg.decoding = "async";
             principalImg.src = principal.imagem || "";
             principalImg.alt = principal.descricaoCurta || principal.titulo || "Noticia principal";
           }
@@ -81,6 +83,8 @@ function carregarNoticias() {
           const card = clone.querySelector(".card-mini");
 
           if (img) {
+            img.loading = "lazy";
+            img.decoding = "async";
             img.src = noticia.imagem || "";
             img.alt = noticia.descricaoCurta || noticia.titulo || "Noticia";
           }
@@ -119,7 +123,8 @@ function carregarNoticias() {
       }
 
       renderPagina();
-    });
+    })
+    .catch(() => {});
 }
 
 carregarNoticias();

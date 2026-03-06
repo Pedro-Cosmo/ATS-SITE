@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "nome": "Ana Clara Souza",
+    "imagem": "/assets/data/img/membro-placeholder.png"
+  },
+  {
+    "id": 2,
+    "nome": "Bruno Henrique Lima",
+    "imagem": "/assets/data/img/membro-placeholder.png"
+  },
+  {
+    "id": 3,
+    "nome": "Carla Fernanda Silva",
+    "imagem": "/assets/data/img/membro-placeholder.png"
+  },
+  {
+    "id": 4,
+    "nome": "Daniel Martins Rocha",
+    "imagem": "/assets/data/img/membro-placeholder.png"
+  },
+  {
+    "id": 5,
+    "nome": "Eduarda Melo Costa",
+    "imagem": "/assets/data/img/membro-placeholder.png"
+  },
+  {
+    "id": 6,
+    "nome": "Felipe Augusto Pereira",
+    "imagem": "/assets/data/img/membro-placeholder.png"
+  }
+]
