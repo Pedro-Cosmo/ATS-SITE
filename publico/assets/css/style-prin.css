@@ -15,6 +15,25 @@
 	--tone-ink: #0b251f;
 }
 
+/* Fundo continuo para secoes 1, 2 e 3 na home */
+.home-gradient-sections {
+	position: relative;
+	background:
+		radial-gradient(1200px 500px at -10% 0%, rgba(134, 224, 185, 0.24), transparent 62%),
+		radial-gradient(980px 520px at 108% 92%, rgba(31, 112, 85, 0.38), transparent 64%),
+		linear-gradient(180deg, var(--tone-deep) 0%, var(--tone-mid) 52%, var(--tone-soft) 100%);
+}
+
+.home-gradient-sections > .institucional,
+.home-gradient-sections > .sec-areas,
+.home-gradient-sections > .sec-producao {
+	background: transparent;
+}
+
+.home-gradient-sections .institucional::before {
+	content: none;
+}
+
 /* ---------------- section 1 e 2 ---------------- */
 .institucional {
 	background:
@@ -486,9 +505,9 @@
 	width: 100%;
 	padding: 90px 20px;
 	background:
-		radial-gradient(980px 460px at 10% 16%, rgba(120, 210, 170, 0.22), transparent 60%),
-		radial-gradient(940px 440px at 90% 84%, rgba(19, 91, 70, 0.45), transparent 62%),
-		linear-gradient(180deg, #0f4a3a 0%, #0c3a2f 56%, #08251e 100%);
+		radial-gradient(1200px 500px at -10% 0%, rgba(134, 224, 185, 0.24), transparent 62%),
+		radial-gradient(980px 520px at 108% 92%, rgba(31, 112, 85, 0.38), transparent 64%),
+		linear-gradient(180deg, var(--tone-deep) 0%, var(--tone-mid) 52%, var(--tone-soft) 100%);
 	display: flex;
 	justify-content: center;
 	font-family: Arial, Helvetica, sans-serif;
