@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Noticias</title>
+    <link rel="stylesheet" href="/assets/css/includes.css">
+    <link rel="stylesheet" href="/assets/css/style-prin.css">
+  </head>
+
+
+  <body>
+    <div data-include="/includes/header.html"></div>
+
+    <main>
+      <section class="sec-noticias" aria-labelledby="titulo-noticias">
+        <div class="noticias-barra" id="titulo-noticias">NOTICIAS</div>
+
+        <div class="noticias-conteudo">
+          <article class="noticia-principal">
+            <div class="img-wrapper-grande">
+              <img src="/assets/data/img/evangelion.jpg" alt="Noticia principal" loading="lazy" decoding="async">
+              <p class="legenda-grande">Manchete da noticia principal em destaque</p>
+            </div>
+          </article>
+
+          <div class="coluna-grid">
+            <div class="grid-noticias" id="grid-noticias"></div>
+
+            <nav class="paginacao" aria-label="Paginacao de noticias">
+              <button class="pg-seta is-disabled" type="button" aria-label="Pagina anterior" disabled>‹</button>
+
+              <div class="pg-bolinhas" role="tablist" aria-label="Paginas">
+                <button class="pg-bolinha is-active" type="button" aria-label="Pagina 1" aria-current="page"></button>
+                <button class="pg-bolinha" type="button" aria-label="Pagina 2"></button>
+                <button class="pg-bolinha" type="button" aria-label="Pagina 3"></button>
+                <button class="pg-bolinha" type="button" aria-label="Pagina 4"></button>
+              </div>
+
+              <button class="pg-seta" type="button" aria-label="Proxima pagina">›</button>
+            </nav>
+          </div>
+        </div>
+
+        <template id="template-mini">
+          <div class="card-mini">
+            <div class="img-wrapper-mini">
+              <img src="" alt="" loading="lazy" decoding="async">
+            </div>
+            <p></p>
+          </div>
+        </template>
+      </section>
+    </main>
+
+    <div data-include="/includes/footer.html"></div>
+
+    <script src="/assets/js/include-partials.js"></script>
+    <script src="/assets/js/scripts-prin.js"></script>
+  </body>
+
+  
+</html>
