@@ -127,4 +127,32 @@ function carregarNoticias() {
     .catch(() => {});
 }
 
+function iniciarAnimacaoSequencialBlocos() {
+  const blocos = document.querySelectorAll(".institucional .bloco-conteudo");
+  if (!blocos.length) return;
+
+  const prefereMenosMovimento = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (prefereMenosMovimento || !("IntersectionObserver" in window)) {
+    blocos.forEach((bloco) => bloco.classList.add("is-visible"));
+    return;
+  }
+
+  const observer = new IntersectionObserver((entradas, obs) => {
+    entradas.forEach((entrada) => {
+      if (!entrada.isIntersecting) return;
+      entrada.target.classList.add("is-visible");
+      obs.unobserve(entrada.target);
+    });
+  }, {
+    threshold: 0.24,
+    rootMargin: "0px 0px -8% 0px"
+  });
+
+  blocos.forEach((bloco) => {
+    bloco.classList.add("seq-reveal");
+    observer.observe(bloco);
+  });
+}
+
 carregarNoticias();
+iniciarAnimacaoSequencialBlocos();
