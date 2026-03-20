@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Colaboradores | LIGATS</title>
+  <link rel="stylesheet" href="/assets/css/includes.css">
+  <link rel="stylesheet" href="/assets/css/pages.css">
+</head>
+<body class="membros-page">
+  <div data-include="/includes/header.html"></div>
+
+  <main class="membros-main">
+    <section class="membros-intro" aria-labelledby="titulo-colaboradores">
+      <h1 id="titulo-colaboradores">Colaboradores</h1>
+      <p>Rede de colaboradores da LIGATS.</p>
+    </section>
+
+    <section class="membros-hall" aria-label="Lista de colaboradores">
+      <div class="membros-grid" id="membros-grid"></div>
+    </section>
+  </main>
+
+  <template id="template-membro">
+    <article class="membro-card">
+      <div class="membro-foto-wrap">
+        <img class="membro-foto" src="" alt="" loading="lazy" decoding="async">
+      </div>
+      <h2 class="membro-nome"></h2>
+    </article>
+  </template>
+
+  <div data-include="/includes/footer.html"></div>
+
+  <script src="/assets/js/include-partials.js"></script>
+  <script src="/assets/js/colaboradores.js"></script>
+</body>
+</html>
