@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | LIGATS</title>
+  <link rel="stylesheet" href="/assets/css/includes.css">
+  <link rel="stylesheet" href="/assets/css/pages.css">
+</head>
+<body class="login-page">
+  <div data-include="/includes/header.html"></div>
+
+  <main class="login-main">
+    <section class="login-card" aria-labelledby="titulo-login">
+      <div class="login-brand">
+        <img src="/assets/data/icons/icon.png" alt="" loading="lazy" decoding="async">
+        <div>
+          <h1 id="titulo-login">Login</h1>
+          <p>&Aacute;rea restrita LIGATS</p>
+        </div>
+      </div>
+
+      <form class="login-form" id="login-form" data-auth-endpoint="/api/auth/login">
+        <div class="login-field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" autocomplete="username" required>
+        </div>
+
+        <div class="login-field">
+          <label for="password">Senha</label>
+          <input id="password" name="password" type="password" autocomplete="current-password" required>
+        </div>
+
+        <div class="login-options">
+          <label class="login-check" for="remember">
+            <input id="remember" name="remember" type="checkbox">
+            Manter conectado
+          </label>
+        </div>
+
+        <button class="login-submit" type="submit">Entrar</button>
+        <p class="login-status" id="login-status" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+  </main>
+
+  <div data-include="/includes/footer.html"></div>
+
+  <script src="/assets/js/include-partials.js"></script>
+  <script src="/assets/js/login.js"></script>
+</body>
+</html>
