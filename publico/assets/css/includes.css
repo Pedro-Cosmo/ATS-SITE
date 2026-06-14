@@ -65,6 +65,28 @@
   border-radius: 6px;
 }
 
+.menu > li > a.login-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px;
+  line-height: 0;
+  border-radius: 999px;
+}
+
+.login-icon {
+  width: 32px;
+  height: 32px;
+  display: block;
+  object-fit: cover;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.menu > li > a.login-link:hover {
+  border-radius: 999px;
+}
+
 /* ---------- SUBMENU ---------- */
 .submenu {
   position: absolute;
@@ -174,6 +196,11 @@
     text-align: left;
     padding: 12px 14px;
     font-size: 1rem;
+  }
+
+  .menu > li > a.login-link {
+    width: 100%;
+    justify-content: flex-start;
   }
 
   .submenu {
