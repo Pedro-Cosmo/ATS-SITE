@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel Administrativo | LIGATS</title>
+  <link rel="stylesheet" href="/assets/css/includes.css">
+  <link rel="stylesheet" href="/assets/css/pages.css">
+</head>
+<body class="admin-page">
+  <div data-include="/includes/header.html"></div>
+
+  <main class="admin-main">
+    <section class="admin-shell" aria-labelledby="titulo-admin">
+      <div class="admin-topbar">
+        <div>
+          <p class="admin-eyebrow">Administrativo</p>
+          <h1 id="titulo-admin">Gerenciamento do site</h1>
+        </div>
+
+        <button class="admin-button admin-button-secondary" type="button" data-admin-logout>Logout</button>
+      </div>
+
+      <div class="admin-actions-grid" aria-label="A&ccedil;&otilde;es administrativas">
+        <a class="admin-action-card" href="/pages/admin-noticias.html">
+          <span class="admin-action-icon">N</span>
+          <span class="admin-action-title">Adicionar not&iacute;cias</span>
+          <span class="admin-action-text">Cadastrar JSON tempor&aacute;rio em admin_noticias.</span>
+        </a>
+
+        <a class="admin-action-card" href="/pages/admin-artigos.html">
+          <span class="admin-action-icon">A</span>
+          <span class="admin-action-title">Adicionar artigos</span>
+          <span class="admin-action-text">Cadastrar JSON tempor&aacute;rio em admin_artigos.</span>
+        </a>
+
+        <a class="admin-action-card" href="/pages/admin-tccs.html">
+          <span class="admin-action-icon">T</span>
+          <span class="admin-action-title">Adicionar TCCs</span>
+          <span class="admin-action-text">Cadastrar JSON tempor&aacute;rio em admin_tccs.</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <div data-include="/includes/footer.html"></div>
+
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/include-partials.js"></script>
+</body>
+</html>
