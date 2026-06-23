@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Adicionar Not&iacute;cias | LIGATS</title>
+  <link rel="stylesheet" href="/assets/css/includes.css">
+  <link rel="stylesheet" href="/assets/css/pages.css">
+</head>
+<body class="admin-page">
+  <div data-include="/includes/header.html"></div>
+
+  <main class="admin-main" data-admin-json-page data-admin-content-type="noticias" data-admin-storage-key="admin_noticias">
+    <section class="admin-shell" aria-labelledby="titulo-admin-json">
+      <div class="admin-topbar">
+        <div>
+          <p class="admin-eyebrow">Not&iacute;cias</p>
+          <h1 id="titulo-admin-json">Adicionar not&iacute;cias</h1>
+        </div>
+
+        <div class="admin-topbar-actions">
+          <a class="admin-button admin-button-secondary" href="/pages/admin.html">Painel</a>
+          <button class="admin-button admin-button-secondary" type="button" data-admin-logout>Logout</button>
+        </div>
+      </div>
+
+      <div class="admin-json-layout">
+        <section class="admin-tool-panel" aria-labelledby="editor-json">
+          <h2 id="editor-json">JSON da not&iacute;cia</h2>
+          <textarea id="admin-json-input" class="admin-json-input" spellcheck="false" aria-label="JSON da not&iacute;cia"></textarea>
+
+          <div class="admin-json-actions">
+            <button class="admin-button" id="admin-json-validate" type="button">Validar JSON</button>
+            <button class="admin-button" id="admin-json-save" type="button">Salvar temporariamente</button>
+            <button class="admin-button admin-button-secondary" id="admin-json-clear" type="button">Limpar</button>
+          </div>
+
+          <p class="admin-status" id="admin-json-status" role="status" aria-live="polite"></p>
+        </section>
+
+        <aside class="admin-tool-panel" aria-labelledby="preview-json">
+          <h2 id="preview-json">Pr&eacute;-visualiza&ccedil;&atilde;o</h2>
+          <div id="admin-content-preview" class="admin-content-preview"></div>
+          <pre id="admin-json-preview" class="admin-json-preview"></pre>
+        </aside>
+      </div>
+
+      <section class="admin-saved-section" aria-labelledby="itens-salvos">
+        <h2 id="itens-salvos">Not&iacute;cias salvas temporariamente</h2>
+        <div class="admin-saved-list" id="admin-saved-list"></div>
+      </section>
+    </section>
+  </main>
+
+  <div data-include="/includes/footer.html"></div>
+
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/include-partials.js"></script>
+  <script src="/assets/js/admin-json.js"></script>
+</body>
+</html>
