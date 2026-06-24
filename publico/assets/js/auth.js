@@ -1,47 +1,55 @@
-(() => {
-  const TOKEN_STORAGE_KEY = "token";
-  const USER_STORAGE_KEY = "ligaats.devUser";
-  const LOGIN_PATH = "/pages/login.html";
+import { supabase } from "./supabase-client.js";
 
-  const getToken = () => window.localStorage.getItem(TOKEN_STORAGE_KEY);
+const LOGIN_PATH = "/pages/login.html";
 
-  const buildLoginUrl = () => {
-    const currentPath = `${window.location.pathname}${window.location.search}`;
-    const params = new URLSearchParams({ redirect: currentPath });
-    return `${LOGIN_PATH}?${params.toString()}`;
-  };
+const buildLoginUrl = () => {
+  const currentPath = `${window.location.pathname}${window.location.search}`;
+  const params = new URLSearchParams({ redirect: currentPath });
+  return `${LOGIN_PATH}?${params.toString()}`;
+};
 
-  const logout = () => {
-    window.localStorage.removeItem(TOKEN_STORAGE_KEY);
-    window.localStorage.removeItem(USER_STORAGE_KEY);
-    window.location.href = LOGIN_PATH;
-  };
+const redirectToLogin = () => {
+  window.location.replace(buildLoginUrl());
+};
 
-  const requireAuth = () => {
-    // Protecao temporaria apenas para desenvolvimento.
-    // Isto nao e seguranca real: qualquer pessoa pode editar o localStorage.
-    // TODO: substituir por validacao real de JWT no backend Node.js.
-    if (!getToken()) {
-      window.location.replace(buildLoginUrl());
-      return false;
-    }
+const logout = async () => {
+  await supabase.auth.signOut();
+  window.location.href = LOGIN_PATH;
+};
 
-    return true;
-  };
+const onReady = (callback) => {
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", callback);
+    return;
+  }
 
-  window.LigaAdminAuth = {
-    getToken,
-    logout,
-    requireAuth,
-  };
+  callback();
+};
 
-  if (!requireAuth()) return;
+// TODO: revisar este fluxo quando existir backend Node.js proprio.
+// No momento a protecao administrativa depende do Supabase Auth + RPC is_admin().
+const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
 
-  document.addEventListener("DOMContentLoaded", () => {
-    const logoutButtons = document.querySelectorAll("[data-admin-logout]");
+if (sessionError || !sessionData.session) {
+  redirectToLogin();
+} else {
+  const { data: isAdmin, error: adminError } = await supabase.rpc("is_admin");
 
-    logoutButtons.forEach((button) => {
-      button.addEventListener("click", logout);
-    });
+  if (adminError || isAdmin !== true) {
+    await supabase.auth.signOut();
+    redirectToLogin();
+  }
+}
+
+window.LigaAdminAuth = {
+  logout,
+  getSession: () => supabase.auth.getSession(),
+};
+
+onReady(() => {
+  const logoutButtons = document.querySelectorAll("[data-admin-logout], #logout");
+
+  logoutButtons.forEach((button) => {
+    button.addEventListener("click", logout);
   });
-})();
+});

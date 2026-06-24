@@ -1,7 +1,8 @@
-function carregarNoticias() {
-  fetch("/assets/data/noticias.json", { cache: "force-cache" })
-    .then(res => res.json())
-    .then(noticias => {
+import { buscarConteudosComFallback } from "./carregar-conteudos.js";
+
+async function carregarNoticias() {
+  try {
+      const noticias = await buscarConteudosComFallback("noticia", "/assets/data/noticias.json");
       const grid = document.querySelector("#grid-noticias");
       const template = document.querySelector("#template-mini");
       const noticiaPrincipal = document.querySelector(".noticia-principal");
@@ -16,7 +17,15 @@ function carregarNoticias() {
 
       if (!grid || !template || !noticiaPrincipal) return;
 
-      const noticiasOrdenadas = [...noticias].sort((a, b) => (a.id || 0) - (b.id || 0));
+      const noticiasOrdenadas = [...noticias].sort((a, b) => {
+        const dataA = Date.parse(a.data || a.createdAt || "") || 0;
+        const dataB = Date.parse(b.data || b.createdAt || "") || 0;
+        if (dataA !== dataB) return dataB - dataA;
+        const idA = Number(a.id) || 0;
+        const idB = Number(b.id) || 0;
+        if (idA || idB) return idA - idB;
+        return String(a.titulo || a.descricaoCurta || "").localeCompare(String(b.titulo || b.descricaoCurta || ""), "pt-BR");
+      });
       const totalPaginas = Math.max(1, Math.ceil(noticiasOrdenadas.length / porPagina));
       let paginaAtual = 1;
 
@@ -65,7 +74,7 @@ function carregarNoticias() {
           if (principalImg) {
             principalImg.loading = "lazy";
             principalImg.decoding = "async";
-            principalImg.src = principal.imagem || "";
+            principalImg.src = principal.imagem || "/assets/data/img/logo.png";
             principalImg.alt = principal.descricaoCurta || principal.titulo || "Noticia principal";
           }
           if (principalLegenda) {
@@ -85,7 +94,7 @@ function carregarNoticias() {
           if (img) {
             img.loading = "lazy";
             img.decoding = "async";
-            img.src = noticia.imagem || "";
+            img.src = noticia.imagem || "/assets/data/img/logo.png";
             img.alt = noticia.descricaoCurta || noticia.titulo || "Noticia";
           }
           if (p) {
@@ -123,8 +132,9 @@ function carregarNoticias() {
       }
 
       renderPagina();
-    })
-    .catch(() => {});
+    } catch (error) {
+      console.error("Erro ao carregar noticias:", error);
+    }
 }
 
 function iniciarAnimacaoSequencialBlocos() {
