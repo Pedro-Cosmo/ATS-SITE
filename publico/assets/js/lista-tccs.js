@@ -1,91 +1,14 @@
-﻿<!DOCTYPE html>
-<html lang="pt-BR">
-   <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>TCCs</title>
-      <link rel="stylesheet" href="/assets/css/includes.css">
-      <link rel="stylesheet" href="/assets/css/pages.css">
-   </head>
-   <body class="artigos">
-     <!----------------------------cabeçalho (include) --------------------------------->
-    <div data-include="/includes/header.html"></div>
+import { buscarConteudosComFallback } from "./carregar-conteudos.js";
 
+const extrairAno = (valor) => {
+  if (!valor) return 0;
+  const match = String(valor).match(/\d{4}/);
+  return match ? Number(match[0]) : 0;
+};
 
-      <div class="faixa-titulo">
-         <h1>Trabalhos de Conclusão de Curso (TCC)</h1>
-      </div>
-
-
-      <main class="artigos-container" id="tcc-container">
-         <!-- lista gerada via JS --> 
-      </main>
-
-<nav class="artigos-paginacao" aria-label="Paginação de TCCs">
-  <button class="pg-seta is-disabled" type="button" disabled aria-label="Página anterior">
-    ‹
-  </button>
-
-  <div class="pg-bolinhas">
-    <button class="pg-bolinha is-active" type="button" aria-current="page" aria-label="Página 1"></button>
-    <button class="pg-bolinha" type="button" aria-label="Página 2"></button>
-    <button class="pg-bolinha" type="button" aria-label="Página 3"></button>
-    <button class="pg-bolinha" type="button" aria-label="Página 4"></button>
-  </div>
-
-  <button class="pg-seta" type="button" aria-label="Próxima página">
-    ›
-  </button>
-</nav>
-
-   <template id="template-tcc">
-  <section class="artigo-card">
-
-    <div class="artigo-lateral">
-      <img src="" alt="">
-      <a class="btn-pdf" href="" download>Baixar PDF</a>
-    </div>
-
-    <div class="artigo-conteudo">
-      <h2></h2>
-      <p class="descricao"></p>
-
-      <div class="artigo-rodape">
-        <div class="meta">
-          <span class="autor"></span>
-          <span class="tags"></span>
-        </div>
-
-        <button class="btn-detalhe">Abrir PDF</button>
-      </div>
-    </div>
-
-  </section>
-</template>
-
-
-
-
-      <!----------------------------SEÇÃO FOOTER (include)------------------------------------>
-      <div data-include="/includes/footer.html"></div>
-
-      <script src="/assets/js/include-partials.js"></script>
-
-<script type="module" src="/assets/js/lista-tccs.js"></script>
-<script type="application/json" id="legacy-tcc-script">
-fetch("/assets/data/tcc.json")
-  .then(res => res.json())
-  .then(dados => {
-
-    const tccs = Array.isArray(dados)
-      ? dados.filter(item => !item.tipo || item.tipo === "tcc")
-      : [];
-
-    const extrairAno = (valor) => {
-      if (!valor) return 0;
-      const match = String(valor).match(/\d{4}/);
-      return match ? Number(match[0]) : 0;
-    };
+const carregarTccs = async () => {
+  try {
+    const tccs = await buscarConteudosComFallback("tcc", "/assets/data/tcc.json");
 
     tccs.sort((a, b) => {
       const anoA = extrairAno(a.ano);
@@ -129,7 +52,7 @@ fetch("/assets/data/tcc.json")
         const btn = document.createElement("button");
         btn.type = "button";
         btn.className = `pg-bolinha${i === paginaAtual ? " is-active" : ""}`;
-        btn.setAttribute("aria-label", `Página ${i}`);
+        btn.setAttribute("aria-label", `Pagina ${i}`);
         if (i === paginaAtual) {
           btn.setAttribute("aria-current", "page");
         }
@@ -161,8 +84,7 @@ fetch("/assets/data/tcc.json")
       const inicio = (paginaAtual - 1) * porPagina;
       const fim = inicio + porPagina;
 
-      tccs.slice(inicio, fim).forEach(tcc => {
-
+      tccs.slice(inicio, fim).forEach((tcc) => {
         const clone = template.content.cloneNode(true);
 
         const img = clone.querySelector("img");
@@ -179,12 +101,12 @@ fetch("/assets/data/tcc.json")
         }
 
         if (h2) {
-          h2.textContent = tcc.titulo || "Sem título";
+          h2.textContent = tcc.titulo || "Sem titulo";
         }
 
         if (p) {
           const descricao = [tcc.descricaoLonga, tcc.descricaoCurta]
-            .find(texto => typeof texto === "string" && texto.trim());
+            .find((texto) => typeof texto === "string" && texto.trim());
           if (descricao) {
             p.textContent = descricao;
             p.style.display = "";
@@ -199,15 +121,13 @@ fetch("/assets/data/tcc.json")
         }
 
         if (autorEl) {
-          if (Array.isArray(tcc.autores) && tcc.autores.length) {
-            autorEl.textContent = `Autor(es): ${tcc.autores.join(", ")}`;
-          } else {
-            autorEl.textContent = "";
-          }
+          autorEl.textContent = Array.isArray(tcc.autores) && tcc.autores.length
+            ? `Autor(es): ${tcc.autores.join(", ")}`
+            : "";
         }
 
         if (tagsEl) {
-          tagsEl.textContent = tcc.ano ? String(tcc.ano) : "Ano não informado";
+          tagsEl.textContent = tcc.ano ? String(tcc.ano) : "Ano nao informado";
         }
 
         if (btnDetalhe) {
@@ -244,11 +164,9 @@ fetch("/assets/data/tcc.json")
     }
 
     renderPagina();
+  } catch (error) {
+    console.error("Erro ao carregar TCCs:", error);
+  }
+};
 
-  })
-  .catch(err => console.error("Erro ao carregar TCCs:", err));
-</script>
-
-
-   </body>
-</html>
+carregarTccs();
