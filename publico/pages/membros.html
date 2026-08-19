@@ -17,24 +17,19 @@
       <p>Hall da equipe acadêmica da LIGA ATS.</p>
     </section>
 
-    <section class="membros-hall" aria-label="Lista de membros">
-      <div class="membros-grid" id="membros-grid"></div>
+    <section class="organograma-section" aria-label="Organograma de membros">
+      <div class="organograma-scroll">
+        <div id="organograma"></div>
+      </div>
     </section>
   </main>
 
-  <template id="template-membro">
-    <article class="membro-card">
-      <div class="membro-foto-wrap">
-        <img class="membro-foto" src="" alt="" loading="lazy" decoding="async">
-      </div>
-      <h2 class="membro-nome"></h2>
-    </article>
-  </template>
+  <!-- organograma será renderizado dinamicamente por JS -->
 
   <!----------------------------SEÇÃO FOOTER (include)------------------------------------>
   <div data-include="/includes/footer.html"></div>
 
   <script src="/assets/js/include-partials.js"></script>
-  <script src="/assets/js/membros.js"></script>
+  <script type="module" src="/assets/js/membros.js"></script>
 </body>
 </html>

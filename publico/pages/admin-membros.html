@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerenciar Membros | LIGATS</title>
+  <link rel="stylesheet" href="/assets/css/includes.css">
+  <link rel="stylesheet" href="/assets/css/pages.css">
+</head>
+<body class="admin-page">
+  <div data-include="/includes/header.html"></div>
+
+  <main class="admin-main" data-admin-membros>
+    <section class="admin-shell" aria-labelledby="titulo-admin-membros">
+      <div class="admin-topbar">
+        <div>
+          <p class="admin-eyebrow">Membros</p>
+          <h1 id="titulo-admin-membros">Gerenciar membros</h1>
+        </div>
+
+        <div class="admin-topbar-actions">
+          <a class="admin-button admin-button-secondary" href="/pages/admin.html">Painel</a>
+          <button class="admin-button admin-button-secondary" type="button" data-admin-logout>Logout</button>
+        </div>
+      </div>
+
+      <div class="admin-form-layout">
+        <form class="admin-tool-panel admin-content-form" id="membro-form">
+          <h2>Dados do membro</h2>
+
+          <div class="admin-form-grid">
+            <label class="admin-field admin-field-wide">
+              <span>Nome</span>
+              <input type="text" name="nome" data-field="nome" required>
+            </label>
+
+            <label class="admin-field">
+              <span>Cargo</span>
+              <input type="text" name="cargo" data-field="cargo">
+            </label>
+
+            <label class="admin-field">
+              <span>Setor</span>
+              <input type="text" name="setor" data-field="setor">
+            </label>
+
+            <label class="admin-field">
+              <span>Superior hierárquico</span>
+              <select name="supervisor" data-field="supervisor">
+                <option value="">Nenhum - topo da hierarquia</option>
+              </select>
+            </label>
+
+            <label class="admin-field">
+              <span>Ordem</span>
+              <input type="number" name="ordem" data-field="ordem" step="1" min="0">
+            </label>
+
+            <label class="admin-field admin-field-inline">
+              <span></span>
+              <div class="admin-checkbox-row">
+                <input type="checkbox" id="membro-ativo" name="ativo" data-field="ativo">
+                <label for="membro-ativo" class="admin-checkbox-label">Membro ativo</label>
+              </div>
+            </label>
+          </div>
+
+          <div class="admin-field admin-field-wide">
+            <span>Foto</span>
+            <div class="admin-dropzone" data-file-drop="foto">
+              <input type="file" accept=".jpg,.jpeg,.png,.webp" data-file-input="foto">
+              <div class="admin-dropzone-copy">
+                <strong>Arraste uma imagem ou selecione um arquivo</strong>
+                <small>JPG, PNG ou WEBP. Será enviada ao Supabase Storage.</small>
+              </div>
+              <button class="admin-button admin-button-secondary" type="button" data-file-trigger="foto">Selecionar imagem</button>
+              <div class="admin-file-feedback" data-file-feedback="foto"></div>
+              <img class="admin-image-preview" data-image-preview alt="Prévia da imagem" hidden>
+            </div>
+          </div>
+
+          <div class="admin-form-actions">
+            <button class="admin-button" id="membro-save" type="button">Salvar membro</button>
+            <button class="admin-button admin-button-secondary" id="membro-clear" type="button">Limpar</button>
+            <a class="admin-button admin-button-secondary" href="/pages/admin.html">Voltar ao painel</a>
+          </div>
+
+          <input type="hidden" data-field="id">
+          <p class="admin-status" id="membro-status" role="status" aria-live="polite"></p>
+        </form>
+
+        <aside class="admin-tool-panel" aria-labelledby="lista-membros">
+          <h2 id="lista-membros">Membros cadastrados</h2>
+          <div id="membros-lista" class="admin-saved-list"></div>
+        </aside>
+      </div>
+
+    </section>
+  </main>
+
+  <div data-include="/includes/footer.html"></div>
+
+  <script type="module" src="/assets/js/auth.js"></script>
+  <script src="/assets/js/include-partials.js"></script>
+  <script type="module" src="/assets/js/admin-membros.js"></script>
+</body>
+</html>
