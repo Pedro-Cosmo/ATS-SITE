@@ -1,89 +1,157 @@
-const MEMBROS_DATA_URL = "/assets/data/json/membros.json";
-const MEMBROS_PLACEHOLDER = "/assets/data/img/membro-placeholder.png";
+import { supabase } from "./supabase-client.js";
 
-const gerarIniciais = (nome) => {
-  if (!nome || typeof nome !== "string") return "M";
-  const partes = nome.trim().split(/\s+/).filter(Boolean);
-  if (!partes.length) return "M";
-  if (partes.length === 1) return partes[0].slice(0, 1).toUpperCase();
-  return `${partes[0][0]}${partes[partes.length - 1][0]}`.toUpperCase();
+const PLACEHOLDER = "/assets/data/img/membro-placeholder.png";
+
+const renderMessage = (container, message) => {
+  container.innerHTML = "";
+  const p = document.createElement("p");
+  p.className = "membros-vazio";
+  p.textContent = message;
+  container.appendChild(p);
 };
 
-const renderMensagem = (grid, mensagem) => {
-  grid.innerHTML = "";
-  const aviso = document.createElement("p");
-  aviso.className = "membros-vazio";
-  aviso.textContent = mensagem;
-  grid.appendChild(aviso);
-};
+function sortChildren(a, b) {
+  const ao = a.ordem ?? 0;
+  const bo = b.ordem ?? 0;
+  if (ao !== bo) return ao - bo;
+  const an = (a.nome || "").toLowerCase();
+  const bn = (b.nome || "").toLowerCase();
+  return an < bn ? -1 : an > bn ? 1 : 0;
+}
 
-const renderMembros = (membros, grid, template) => {
-  grid.innerHTML = "";
-  const fragment = document.createDocumentFragment();
+function buildTree(rows) {
+  const map = new Map();
+  const roots = [];
 
-  membros.forEach((membro) => {
-    const clone = template.content.cloneNode(true);
-    const fotoWrap = clone.querySelector(".membro-foto-wrap");
-    const img = clone.querySelector(".membro-foto");
-    const nomeEl = clone.querySelector(".membro-nome");
-
-    const nome = typeof membro.nome === "string" && membro.nome.trim()
-      ? membro.nome.trim()
-      : "Membro sem nome";
-    const imagem = typeof membro.imagem === "string" && membro.imagem.trim()
-      ? membro.imagem.trim()
-      : MEMBROS_PLACEHOLDER;
-
-    if (fotoWrap) {
-      fotoWrap.setAttribute("data-iniciais", gerarIniciais(nome));
-    }
-
-    if (img) {
-      img.src = imagem;
-      img.alt = nome;
-      img.addEventListener("error", () => {
-        if (!img.src.endsWith(MEMBROS_PLACEHOLDER)) {
-          img.src = MEMBROS_PLACEHOLDER;
-          return;
-        }
-        if (fotoWrap) {
-          fotoWrap.classList.add("sem-imagem");
-        }
-      });
-    }
-
-    if (nomeEl) {
-      nomeEl.textContent = nome;
-    }
-
-    fragment.appendChild(clone);
+  rows.forEach((r) => {
+    map.set(r.id, Object.assign({}, r, { filhos: [] }));
   });
 
-  grid.appendChild(fragment);
-};
+  for (const node of map.values()) {
+    const sid = node.supervisor_id;
+    if (!sid) {
+      roots.push(node);
+      continue;
+    }
 
-const carregarMembros = async () => {
-  const grid = document.getElementById("membros-grid");
-  const template = document.getElementById("template-membro");
+    if (sid === node.id) {
+      console.warn("Membro com supervisor_id igual ao próprio:", node.id);
+      roots.push(node);
+      continue;
+    }
 
-  if (!grid || !template) return;
+    const parent = map.get(sid);
+    if (parent) {
+      parent.filhos.push(node);
+    } else {
+      console.warn("Supervisor não encontrado para membro:", node.id, sid);
+      roots.push(node);
+    }
+  }
+
+  // sort recursively
+  function sortRec(list) {
+    list.sort(sortChildren);
+    list.forEach((n) => sortRec(n.filhos));
+  }
+
+  sortRec(roots);
+  return roots;
+}
+
+function createNodeElement(node) {
+  const el = document.createElement("div");
+  el.className = "organograma-node";
+
+  const card = document.createElement("div");
+  card.className = "organograma-card";
+
+  const img = document.createElement("img");
+  img.className = "organograma-foto";
+  img.alt = node.nome || "Membro";
+  if (node.foto_path) {
+    const { data: publicData } = supabase.storage.from("site-images").getPublicUrl(node.foto_path);
+    img.src = publicData.publicUrl;
+  } else {
+    img.src = PLACEHOLDER;
+  }
+  img.onerror = () => {
+    if (img.src !== PLACEHOLDER) img.src = PLACEHOLDER;
+  };
+
+  const info = document.createElement("div");
+  info.className = "organograma-info";
+
+  const nome = document.createElement("div");
+  nome.className = "organograma-nome";
+  nome.textContent = node.nome || "(sem nome)";
+
+  const cargo = document.createElement("div");
+  cargo.className = "organograma-cargo";
+  cargo.textContent = node.cargo || "";
+
+  const setor = document.createElement("div");
+  setor.className = "organograma-setor";
+  setor.textContent = node.setor || "";
+
+  info.appendChild(nome);
+  info.appendChild(cargo);
+  info.appendChild(setor);
+
+  card.appendChild(img);
+  card.appendChild(info);
+
+  el.appendChild(card);
+
+  if (node.filhos && node.filhos.length) {
+    const filhosWrap = document.createElement("div");
+    filhosWrap.className = "organograma-filhos";
+    node.filhos.forEach((f) => {
+      const childEl = createNodeElement(f);
+      filhosWrap.appendChild(childEl);
+    });
+    el.appendChild(filhosWrap);
+  }
+
+  return el;
+}
+
+async function carregarMembros() {
+  const container = document.getElementById("organograma");
+  if (!container) return;
 
   try {
-    const resposta = await fetch(MEMBROS_DATA_URL, { cache: "force-cache" });
-    if (!resposta.ok) throw new Error("Falha ao carregar membros");
+    const { data, error } = await supabase
+      .from("membros")
+      .select("id, nome, cargo, setor, foto_path, supervisor_id, ordem")
+      .eq("ativo", true)
+      .order("ordem", { ascending: true })
+      .order("nome", { ascending: true });
 
-    const dados = await resposta.json();
-    const membros = Array.isArray(dados) ? dados : [];
+    if (error) throw error;
 
-    if (!membros.length) {
-      renderMensagem(grid, "Nenhum membro cadastrado no momento.");
+    const rows = Array.isArray(data) ? data : [];
+    if (!rows.length) {
+      renderMessage(container, "Nenhum membro cadastrado no momento.");
       return;
     }
 
-    renderMembros(membros, grid, template);
-  } catch (erro) {
-    renderMensagem(grid, "Não foi possível carregar a lista de membros.");
+    const roots = buildTree(rows);
+
+    container.innerHTML = "";
+    const treeWrap = document.createElement("div");
+    treeWrap.className = "organograma-tree";
+
+    roots.forEach((r) => {
+      const nodeEl = createNodeElement(r);
+      treeWrap.appendChild(nodeEl);
+    });
+
+    container.appendChild(treeWrap);
+  } catch (err) {
+    console.error(err);
+    renderMessage(container, "Não foi possível carregar o organograma.");
   }
-};
+}
 
 document.addEventListener("DOMContentLoaded", carregarMembros);
