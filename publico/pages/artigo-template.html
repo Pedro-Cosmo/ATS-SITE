@@ -54,7 +54,8 @@
 
 
 <!----------------------------script --------------------------------->
-      <script>
+      <script type="module" src="/assets/js/detalhe-artigo.js"></script>
+      <script type="application/json" id="legacy-artigo-detalhe-script">
   const params = new URLSearchParams(window.location.search);
   const id = Number(params.get("id"));
 

@@ -1,85 +1,8 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-   <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Artigos</title>
-      <link rel="stylesheet" href="/assets/css/includes.css">
-      <link rel="stylesheet" href="/assets/css/pages.css">
-   </head>
-   <body class="artigos">
-     <!----------------------------cabeçalho (include) --------------------------------->
-    <div data-include="/includes/header.html"></div>
+import { buscarConteudosComFallback } from "./carregar-conteudos.js";
 
-
-      <div class="faixa-titulo faixa-titulo-noticias">
-         <h1>Artigos Acadêmicos</h1>
-      </div>
-
-
-      <main class="artigos-container" id="artigos-container">
-         <!-- aqui NÃO tem section nenhuma --> 
-      </main>
-
-<nav class="artigos-paginacao" aria-label="Paginação de artigos">
-  <button class="pg-seta is-disabled" type="button" disabled aria-label="Página anterior">
-    ‹
-  </button>
-
-  <div class="pg-bolinhas">
-    <button class="pg-bolinha is-active" type="button" aria-current="page" aria-label="Página 1"></button>
-    <button class="pg-bolinha" type="button" aria-label="Página 2"></button>
-    <button class="pg-bolinha" type="button" aria-label="Página 3"></button>
-    <button class="pg-bolinha" type="button" aria-label="Página 4"></button>
-  </div>
-
-  <button class="pg-seta" type="button" aria-label="Próxima página">
-    ›
-  </button>
-</nav>
-
-   <template id="template-artigo">
-  <section class="artigo-card">
-
-    <div class="artigo-lateral">
-      <img src="" alt="">
-      <a class="btn-pdf" href="" download>Baixar PDF</a>
-    </div>
-
-    <div class="artigo-conteudo">
-      <h2></h2>
-      <p class="descricao"></p>
-
-      <div class="artigo-rodape">
-        <div class="meta">
-          <span class="autor"></span>
-          <span class="tags"></span>
-        </div>
-
-        <button class="btn-detalhe">Abrir PDF</button>
-      </div>
-    </div>
-
-  </section>
-</template>
-
-
-
-
-      <!----------------------------SEÇÃO FOOTER (include)------------------------------------>
-      <div data-include="/includes/footer.html"></div>
-
-      <script src="/assets/js/include-partials.js"></script>
-
-<script type="module" src="/assets/js/lista-artigos.js"></script>
-<script type="application/json" id="legacy-artigos-script">
-fetch("/assets/data/dados.json")
-  .then(res => res.json())
-  .then(dados => {
-
-    const artigos = Array.isArray(dados)
-      ? dados.filter(item => !item.tipo || item.tipo === "artigo")
-      : [];
+const carregarArtigos = async () => {
+  try {
+    const artigos = await buscarConteudosComFallback("artigo", "/assets/data/dados.json");
 
     artigos.sort((a, b) => {
       const anoA = Number(a.ano) || 0;
@@ -155,8 +78,7 @@ fetch("/assets/data/dados.json")
       const inicio = (paginaAtual - 1) * porPagina;
       const fim = inicio + porPagina;
 
-      artigos.slice(inicio, fim).forEach(artigo => {
-
+      artigos.slice(inicio, fim).forEach((artigo) => {
         const clone = template.content.cloneNode(true);
 
         const img = clone.querySelector("img");
@@ -173,12 +95,12 @@ fetch("/assets/data/dados.json")
         }
 
         if (h2) {
-          h2.textContent = artigo.titulo || "Sem t��tulo";
+          h2.textContent = artigo.titulo || "Sem titulo";
         }
 
         if (p) {
           const descricao = [artigo.descricaoLonga, artigo.descricaoCurta]
-            .find(texto => typeof texto === "string" && texto.trim());
+            .find((texto) => typeof texto === "string" && texto.trim());
           if (descricao) {
             p.textContent = descricao;
             p.style.display = "";
@@ -193,11 +115,9 @@ fetch("/assets/data/dados.json")
         }
 
         if (autorEl) {
-          if (Array.isArray(artigo.autores) && artigo.autores.length) {
-            autorEl.textContent = `Autor(es): ${artigo.autores.join(", ")}`;
-          } else {
-            autorEl.textContent = "";
-          }
+          autorEl.textContent = Array.isArray(artigo.autores) && artigo.autores.length
+            ? `Autor(es): ${artigo.autores.join(", ")}`
+            : "";
         }
 
         if (tagsEl) {
@@ -208,7 +128,10 @@ fetch("/assets/data/dados.json")
           btnDetalhe.addEventListener("click", () => {
             if (artigo.pdf) {
               window.open(encodeURI(artigo.pdf), "_blank");
+              return;
             }
+
+            window.location.href = `/pages/artigo-template.html?id=${artigo.id}`;
           });
         }
 
@@ -238,11 +161,9 @@ fetch("/assets/data/dados.json")
     }
 
     renderPagina();
+  } catch (error) {
+    console.error("Erro ao carregar artigos:", error);
+  }
+};
 
-  })
-  .catch(err => console.error("Erro ao carregar artigos:", err));
-</script>
-
-
-   </body>
-</html>
+carregarArtigos();

@@ -1,51 +1,11 @@
-const TOKEN_STORAGE_KEY = "token";
-const USER_STORAGE_KEY = "ligaats.devUser";
-const DEV_ADMIN_EMAIL = "admin@teste";
-const DEV_ADMIN_PASSWORD = "01234567";
-const DEV_ADMIN_TOKEN = "dev-admin-token";
-
-const saveAuthSession = () => {
-  // TODO: substituir login fake por autenticacao real com Node.js + JWT.
-  // Credenciais fixas apenas para desenvolvimento. Isto nao e seguranca real.
-  window.localStorage.setItem(TOKEN_STORAGE_KEY, DEV_ADMIN_TOKEN);
-  window.localStorage.setItem(USER_STORAGE_KEY, JSON.stringify({
-    email: DEV_ADMIN_EMAIL,
-    perfil: "admin",
-    ambiente: "desenvolvimento",
-  }));
-};
-
-const getAuthToken = () => window.localStorage.getItem(TOKEN_STORAGE_KEY);
-
-const clearAuthSession = () => {
-  window.localStorage.removeItem(TOKEN_STORAGE_KEY);
-  window.localStorage.removeItem(USER_STORAGE_KEY);
-};
-
-const authFetch = (url, options = {}) => {
-  const token = getAuthToken();
-  const headers = new Headers(options.headers || {});
-
-  if (token) {
-    headers.set("Authorization", `Bearer ${token}`);
-  }
-
-  return fetch(url, {
-    ...options,
-    headers,
-  });
-};
-
-window.LigaAuth = {
-  getAuthToken,
-  clearAuthSession,
-  authFetch,
-};
+import { supabase } from "./supabase-client.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("login-form");
   if (!form) return;
 
+  const emailInput = document.getElementById("email");
+  const passwordInput = document.getElementById("password");
   const status = document.getElementById("login-status");
   const submit = form.querySelector(".login-submit");
 
@@ -59,9 +19,8 @@ document.addEventListener("DOMContentLoaded", () => {
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
-    const formData = new FormData(form);
-    const email = String(formData.get("email") || "").trim().toLowerCase();
-    const password = String(formData.get("password") || "");
+    const email = emailInput ? emailInput.value.trim() : "";
+    const password = passwordInput ? passwordInput.value : "";
 
     if (!email || !password) {
       setStatus("Informe e-mail e senha.", "error");
@@ -71,21 +30,38 @@ document.addEventListener("DOMContentLoaded", () => {
     if (submit) {
       submit.disabled = true;
     }
+
     setStatus("Entrando...");
 
-    if (email === DEV_ADMIN_EMAIL && password === DEV_ADMIN_PASSWORD) {
-      saveAuthSession();
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        setStatus("E-mail ou senha inv\u00e1lidos.", "error");
+        return;
+      }
+
+      const { data: isAdmin, error: adminError } = await supabase.rpc("is_admin");
+
+      if (adminError || isAdmin !== true) {
+        await supabase.auth.signOut();
+        setStatus("Este usu\u00e1rio n\u00e3o tem permiss\u00e3o de administrador.", "error");
+        return;
+      }
+
       setStatus("Login realizado.", "success");
 
       const params = new URLSearchParams(window.location.search);
       window.location.href = params.get("redirect") || "/pages/admin.html";
-      return;
-    }
-
-    // TODO: chamar endpoint real definido em data-auth-endpoint quando o backend existir.
-    setStatus("E-mail ou senha inv\u00e1lidos.", "error");
-    if (submit) {
-      submit.disabled = false;
+    } catch (error) {
+      setStatus("N\u00e3o foi poss\u00edvel entrar agora. Tente novamente.", "error");
+    } finally {
+      if (submit) {
+        submit.disabled = false;
+      }
     }
   });
 });

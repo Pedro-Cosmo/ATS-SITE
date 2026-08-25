@@ -10,12 +10,12 @@
 <body class="admin-page">
   <div data-include="/includes/header.html"></div>
 
-  <main class="admin-main" data-admin-json-page data-admin-content-type="artigos" data-admin-storage-key="admin_artigos">
-    <section class="admin-shell" aria-labelledby="titulo-admin-json">
+  <main class="admin-main" data-admin-form-page data-admin-content-type="artigos" data-admin-storage-key="admin_artigos">
+    <section class="admin-shell" aria-labelledby="titulo-admin-form">
       <div class="admin-topbar">
         <div>
           <p class="admin-eyebrow">Artigos</p>
-          <h1 id="titulo-admin-json">Adicionar artigos</h1>
+          <h1 id="titulo-admin-form">Adicionar artigo</h1>
         </div>
 
         <div class="admin-topbar-actions">
@@ -24,26 +24,125 @@
         </div>
       </div>
 
-      <div class="admin-json-layout">
-        <section class="admin-tool-panel" aria-labelledby="editor-json">
-          <h2 id="editor-json">JSON do artigo</h2>
-          <textarea id="admin-json-input" class="admin-json-input" spellcheck="false" aria-label="JSON do artigo"></textarea>
+      <div class="admin-form-layout">
+        <form class="admin-tool-panel admin-content-form" id="admin-content-form">
+          <h2>Dados do artigo</h2>
 
-          <div class="admin-json-actions">
-            <button class="admin-button" id="admin-json-validate" type="button">Validar JSON</button>
-            <button class="admin-button" id="admin-json-save" type="button">Salvar temporariamente</button>
-            <button class="admin-button admin-button-secondary" id="admin-json-clear" type="button">Limpar</button>
+          <div class="admin-form-grid">
+            <label class="admin-field admin-field-wide">
+              <span>T&iacute;tulo</span>
+              <input type="text" name="titulo" data-admin-field="titulo" required>
+            </label>
+
+            <label class="admin-field admin-field-wide">
+              <span>Descri&ccedil;&atilde;o curta</span>
+              <input type="text" name="descricaoCurta" data-admin-field="descricaoCurta" required>
+            </label>
+
+            <label class="admin-field admin-field-wide">
+              <span>Descri&ccedil;&atilde;o longa</span>
+              <textarea name="descricaoLonga" data-admin-field="descricaoLonga"></textarea>
+            </label>
+
+            <label class="admin-field">
+              <span>Ano</span>
+              <input type="number" name="ano" data-admin-field="ano" min="1900" max="2100" step="1" required>
+            </label>
           </div>
 
-          <p class="admin-status" id="admin-json-status" role="status" aria-live="polite"></p>
-        </section>
+          <div class="admin-field admin-field-wide">
+            <span>Autores</span>
+            <div class="admin-repeat-control" data-repeat-list="autores">
+              <div class="admin-repeat-items" data-repeat-items></div>
+              <div class="admin-repeat-row">
+                <input type="text" data-repeat-input placeholder="Nome do autor">
+                <button class="admin-button admin-button-secondary" type="button" data-repeat-add>Adicionar</button>
+              </div>
+            </div>
+          </div>
 
-        <aside class="admin-tool-panel" aria-labelledby="preview-json">
-          <h2 id="preview-json">Pr&eacute;-visualiza&ccedil;&atilde;o</h2>
+          <div class="admin-field admin-field-wide">
+            <span>Palavras-chave</span>
+            <div class="admin-repeat-control" data-repeat-list="palavrasChave">
+              <div class="admin-repeat-items" data-repeat-items></div>
+              <div class="admin-repeat-row">
+                <input type="text" data-repeat-input placeholder="Palavra-chave">
+                <button class="admin-button admin-button-secondary" type="button" data-repeat-add>Adicionar</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="admin-upload-grid">
+            <div class="admin-field">
+              <span>Imagem</span>
+              <div class="admin-dropzone" data-file-drop="imagem">
+                <input type="file" accept=".jpg,.jpeg,.png,.webp" data-file-input="imagem">
+                <div class="admin-dropzone-copy">
+                  <strong>Arraste uma imagem ou selecione um arquivo</strong>
+                  <small>JPG, PNG ou WEBP. O upload real ser&aacute; feito no backend futuramente.</small>
+                </div>
+                <button class="admin-button admin-button-secondary" type="button" data-file-trigger="imagem">Selecionar imagem</button>
+                <div class="admin-file-feedback" data-file-feedback="imagem"></div>
+                <img class="admin-image-preview" data-image-preview alt="Pr&eacute;via da imagem" hidden>
+              </div>
+            </div>
+
+            <div class="admin-field">
+              <span>PDF</span>
+              <div class="admin-dropzone" data-file-drop="pdf">
+                <input type="file" accept="application/pdf,.pdf" data-file-input="pdf">
+                <div class="admin-dropzone-copy">
+                  <strong>Arraste o PDF ou selecione um arquivo</strong>
+                  <small>PDF de at&eacute; 10 MB. O upload ser&aacute; feito ao salvar no Supabase.</small>
+                </div>
+                <button class="admin-button admin-button-secondary" type="button" data-file-trigger="pdf">Selecionar PDF</button>
+                <div class="admin-file-feedback" data-file-feedback="pdf"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="admin-form-actions">
+            <button class="admin-button" id="admin-form-generate" type="button">Gerar JSON</button>
+            <button class="admin-button" id="admin-form-save" type="button">Salvar temporariamente</button>
+            <button class="admin-button" id="admin-form-save-supabase" type="button">Salvar no Supabase</button>
+            <button class="admin-button admin-button-secondary" id="admin-form-copy" type="button">Copiar JSON</button>
+            <button class="admin-button admin-button-secondary" id="admin-form-clear" type="button">Limpar formul&aacute;rio</button>
+            <a class="admin-button admin-button-secondary" href="/pages/admin.html">Voltar ao painel</a>
+          </div>
+
+          <p class="admin-status" id="admin-form-status" role="status" aria-live="polite"></p>
+        </form>
+
+        <aside class="admin-tool-panel" aria-labelledby="preview-conteudo">
+          <h2 id="preview-conteudo">Pr&eacute;-visualiza&ccedil;&atilde;o</h2>
           <div id="admin-content-preview" class="admin-content-preview"></div>
           <pre id="admin-json-preview" class="admin-json-preview"></pre>
         </aside>
       </div>
+
+      <details class="admin-advanced">
+        <summary>Modo avan&ccedil;ado: JSON manual</summary>
+
+        <div class="admin-json-layout admin-json-layout-advanced">
+          <section class="admin-tool-panel" aria-labelledby="editor-json-manual">
+            <h2 id="editor-json-manual">JSON manual</h2>
+            <textarea id="admin-manual-json" class="admin-json-input" spellcheck="false" aria-label="JSON manual"></textarea>
+
+            <div class="admin-json-actions">
+              <button class="admin-button" id="admin-manual-validate" type="button">Validar JSON</button>
+              <button class="admin-button" id="admin-manual-save" type="button">Salvar JSON manual</button>
+              <button class="admin-button admin-button-secondary" id="admin-manual-clear" type="button">Limpar</button>
+            </div>
+
+            <p class="admin-status" id="admin-manual-status" role="status" aria-live="polite"></p>
+          </section>
+
+          <aside class="admin-tool-panel" aria-labelledby="preview-json-manual">
+            <h2 id="preview-json-manual">Preview formatado</h2>
+            <pre id="admin-manual-preview" class="admin-json-preview"></pre>
+          </aside>
+        </div>
+      </details>
 
       <section class="admin-saved-section" aria-labelledby="itens-salvos">
         <h2 id="itens-salvos">Artigos salvos temporariamente</h2>
@@ -54,8 +153,8 @@
 
   <div data-include="/includes/footer.html"></div>
 
-  <script src="/assets/js/auth.js"></script>
+  <script type="module" src="/assets/js/auth.js"></script>
   <script src="/assets/js/include-partials.js"></script>
-  <script src="/assets/js/admin-json.js"></script>
+  <script type="module" src="/assets/js/admin-form.js"></script>
 </body>
 </html>
