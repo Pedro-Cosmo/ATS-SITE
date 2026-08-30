@@ -60,8 +60,8 @@ function buildTree(rows) {
 }
 
 function createNodeElement(node) {
-  const el = document.createElement("div");
-  el.className = "organograma-node";
+  const li = document.createElement("li");
+  li.className = "organograma-node";
 
   const card = document.createElement("div");
   card.className = "organograma-card";
@@ -100,24 +100,96 @@ function createNodeElement(node) {
 
   card.appendChild(img);
   card.appendChild(info);
-
-  el.appendChild(card);
+  li.appendChild(card);
 
   if (node.filhos && node.filhos.length) {
-    const filhosWrap = document.createElement("div");
+    const filhosWrap = document.createElement("ul");
     filhosWrap.className = "organograma-filhos";
     node.filhos.forEach((f) => {
-      const childEl = createNodeElement(f);
-      filhosWrap.appendChild(childEl);
+      filhosWrap.appendChild(createNodeElement(f));
     });
-    el.appendChild(filhosWrap);
+    li.appendChild(filhosWrap);
   }
 
-  return el;
+  return li;
+}
+
+function getSetores(rows) {
+  const setores = rows
+    .map((membro) => (typeof membro.setor === "string" ? membro.setor.trim() : ""))
+    .filter(Boolean);
+
+  return [...new Set(setores)].sort((a, b) =>
+    a.localeCompare(b, "pt-BR", { sensitivity: "base" })
+  );
+}
+
+function renderOrganograma(container, rows) {
+  const roots = buildTree(rows);
+
+  container.innerHTML = "";
+  const treeWrap = document.createElement("ul");
+  treeWrap.className = "organograma-tree";
+
+  roots.forEach((root) => {
+    treeWrap.appendChild(createNodeElement(root));
+  });
+
+  container.appendChild(treeWrap);
+}
+
+function configurarSetores(rows, nav, titulo, container) {
+  const setores = getSetores(rows);
+
+  nav.innerHTML = "";
+
+  if (!setores.length) {
+    nav.hidden = true;
+    titulo.hidden = true;
+    renderOrganograma(container, rows);
+    return;
+  }
+
+  const buttons = new Map();
+
+  const selecionarSetor = (setorSelecionado) => {
+    const membrosDoSetor = rows.filter((membro) => {
+      const setor = typeof membro.setor === "string" ? membro.setor.trim() : "";
+      return setor === setorSelecionado;
+    });
+
+    buttons.forEach((button, setor) => {
+      const isActive = setor === setorSelecionado;
+      button.classList.toggle("is-active", isActive);
+      button.setAttribute("aria-pressed", String(isActive));
+    });
+
+    titulo.textContent = setorSelecionado;
+    renderOrganograma(container, membrosDoSetor);
+  };
+
+  setores.forEach((setor) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "setor-button";
+    button.textContent = setor;
+    button.setAttribute("aria-controls", "organograma");
+    button.setAttribute("aria-pressed", "false");
+    button.addEventListener("click", () => selecionarSetor(setor));
+
+    buttons.set(setor, button);
+    nav.appendChild(button);
+  });
+
+  nav.hidden = false;
+  titulo.hidden = false;
+  selecionarSetor(setores[0]);
 }
 
 async function carregarMembros() {
   const container = document.getElementById("organograma");
+  const setoresNav = document.querySelector(".setores-nav");
+  const setorTitulo = document.getElementById("setor-titulo");
   if (!container) return;
 
   try {
@@ -136,18 +208,12 @@ async function carregarMembros() {
       return;
     }
 
-    const roots = buildTree(rows);
+    if (!setoresNav || !setorTitulo) {
+      renderOrganograma(container, rows);
+      return;
+    }
 
-    container.innerHTML = "";
-    const treeWrap = document.createElement("div");
-    treeWrap.className = "organograma-tree";
-
-    roots.forEach((r) => {
-      const nodeEl = createNodeElement(r);
-      treeWrap.appendChild(nodeEl);
-    });
-
-    container.appendChild(treeWrap);
+    configurarSetores(rows, setoresNav, setorTitulo, container);
   } catch (err) {
     console.error(err);
     renderMessage(container, "Não foi possível carregar o organograma.");
