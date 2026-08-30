@@ -679,9 +679,10 @@ body.pagina-noticia .paginador-bloco {
 }
 
 .membros-main {
-  max-width: 1180px;
-  margin: 0 auto;
-  padding: 42px 16px 70px;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 32px 14px 60px;
 }
 
 .membros-intro {
@@ -1498,6 +1499,29 @@ body.pagina-noticia .paginador-bloco {
   gap: 16px;
 }
 
+.admin-membros-layout {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.admin-membros-list-panel {
+  width: 100%;
+}
+
+.admin-membros-list-panel .admin-saved-list {
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+}
+
+.admin-membros-list-panel .admin-saved-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.admin-membros-list-panel .admin-saved-card .admin-saved-actions {
+  margin-top: auto;
+  padding-top: 12px;
+}
+
 .admin-saved-card {
   min-width: 0;
   border: 1px solid rgba(15, 63, 50, 0.12);
@@ -1598,6 +1622,10 @@ body.pagina-noticia .paginador-bloco {
   .admin-json-input {
     min-height: 320px;
   }
+
+  .admin-membros-list-panel .admin-saved-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 640px) {
@@ -1640,143 +1668,248 @@ body.pagina-noticia .paginador-bloco {
   .admin-preview-list {
     grid-template-columns: 1fr;
   }
+
+  .admin-membros-list-panel .admin-saved-list {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Organograma público de membros */
 
+.setores-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  margin: 0 auto 18px;
+  padding: 0 8px;
+}
+
+.setor-button {
+  appearance: none;
+  border: 1px solid rgba(47, 127, 102, 0.75);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.94);
+  color: #0f3d32;
+  padding: 9px 18px;
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 700;
+  line-height: 1.2;
+  cursor: pointer;
+  transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.setor-button:hover {
+  border-color: #7fbea4;
+  background: #e5f2ec;
+}
+
+.setor-button:focus-visible {
+  outline: 3px solid rgba(255, 255, 255, 0.9);
+  outline-offset: 3px;
+}
+
+.setor-button.is-active {
+  border-color: #90cbb2;
+  background: #2f7f66;
+  color: #ffffff;
+  box-shadow: 0 5px 14px rgba(0, 0, 0, 0.18);
+}
+
+.setor-titulo {
+  margin: 0;
+  color: #eaf4ef;
+  font-size: clamp(1.35rem, 2vw, 1.75rem);
+  line-height: 1.25;
+  text-align: center;
+}
+
 .organograma-section {
   width: 100%;
-  padding: 30px 0;
+  padding: 20px 0 30px;
 }
 
 .organograma-scroll {
   width: 100%;
-  overflow-x: auto;
-  overflow-y: visible;
-  padding: 20px 10px 35px;
+  overflow: visible;
+  padding: 10px 0 20px;
 }
 
-.organograma-tree {
+.organograma-tree,
+.organograma-tree ul {
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  gap: 40px;
-  width: max-content;
-  min-width: 100%;
-  margin: 0 auto;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.organograma-tree {
+  width: 100%;
+  max-width: 100%;
+  gap: clamp(10px, 1.2vw, 20px);
 }
 
 .organograma-node {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  position: relative;
+  min-width: 0;
+  text-align: center;
+}
+
+.organograma-tree > .organograma-node {
+  flex: 0 1 auto;
 }
 
 .organograma-card {
-  position: relative;
-
-  width: 240px;
-  min-width: 240px;
-  max-width: 240px;
-
+  width: clamp(135px, 11vw, 175px);
+  box-sizing: border-box;
   background: #ffffff;
   border: 2px solid rgba(15, 63, 50, 0.35);
   border-radius: 10px;
-
-  padding: 12px;
-
+  padding: clamp(7px, 0.65vw, 10px);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-
-  text-align: center;
-
   overflow: hidden;
 }
 
 .organograma-foto {
   display: block;
-
   width: 100%;
-  height: 130px;
-
+  height: clamp(90px, 8vw, 115px);
   object-fit: cover;
-
-  border-radius: 8px;
+  border-radius: 7px;
   background: #e9f2ee;
-
-  margin-bottom: 10px;
+  margin-bottom: 7px;
 }
 
 .organograma-info {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
 }
 
 .organograma-nome {
   font-weight: 800;
   color: #0f3d32;
-  font-size: 1rem;
+  font-size: clamp(0.82rem, 0.8vw, 0.95rem);
+  line-height: 1.25;
+  overflow-wrap: anywhere;
 }
 
 .organograma-cargo {
   color: #155441;
-  font-size: 0.92rem;
+  font-size: clamp(0.74rem, 0.72vw, 0.86rem);
+  line-height: 1.25;
+  overflow-wrap: anywhere;
 }
 
 .organograma-setor {
   color: #496158;
-  font-size: 0.82rem;
+  font-size: clamp(0.68rem, 0.66vw, 0.78rem);
+  line-height: 1.25;
+  overflow-wrap: anywhere;
 }
 
-.organograma-filhos {
-  display: flex;
-  justify-content: center;
-  gap: 32px;
-  margin-top: 28px;
+/*
+ * Cada UL descendente desenha a linha que sai do pai. Os pseudo-elementos
+ * dos LI completam o trecho horizontal e a descida até cada filho.
+ */
+.organograma-tree ul {
   position: relative;
+  padding-top: 18px;
 }
 
-/* vertical connector from card to children */
-.organograma-card::after {
+.organograma-tree ul::before {
   content: "";
   position: absolute;
-  left: 50%;
-  bottom: -28px;
-  transform: translateX(-50%);
-  width: 4px;
-  height: 28px;
-  background: #2f6f60;
-}
-
-/* horizontal connector above children */
-.organograma-filhos::before {
-  content: "";
-  position: absolute;
-  top: -14px;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: #2f6f60;
-}
-
-.organograma-node > .organograma-filhos > .organograma-node::before {
-  content: "";
-  position: absolute;
-  top: -28px;
+  top: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 4px;
-  height: 28px;
-  background: #2f6f60;
+  width: 0;
+  height: 18px;
+  border-left: 2px solid #2f6f60;
 }
 
-@media (max-width: 900px) {
-  .organograma-card { min-width: 200px; }
-  .organograma-foto { height: 120px; }
+.organograma-tree ul > li {
+  flex: 1 1 auto;
+  padding: 18px clamp(3px, 0.45vw, 7px) 0;
 }
 
-@media (max-width: 640px) {
-  .organograma-tree { gap: 18px; }
-  .organograma-card { min-width: 180px; }
+.organograma-tree ul > li::before,
+.organograma-tree ul > li::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 50%;
+  width: 50%;
+  height: 18px;
+  box-sizing: border-box;
+  border-top: 2px solid #2f6f60;
+}
+
+.organograma-tree ul > li::after {
+  right: auto;
+  left: 50%;
+  border-left: 2px solid #2f6f60;
+}
+
+.organograma-tree ul > li:first-child::before,
+.organograma-tree ul > li:last-child::after {
+  border: 0;
+}
+
+.organograma-tree ul > li:first-child::after {
+  border-radius: 6px 0 0 0;
+}
+
+.organograma-tree ul > li:last-child::before {
+  border-right: 2px solid #2f6f60;
+  border-radius: 0 6px 0 0;
+}
+
+.organograma-tree ul > li:only-child {
+  padding-top: 0;
+}
+
+.organograma-tree ul > li:only-child::before,
+.organograma-tree ul > li:only-child::after {
+  display: none;
+}
+
+@media (max-width: 700px) {
+  .setores-nav {
+    gap: 8px;
+    margin-bottom: 16px;
+    padding: 0;
+  }
+
+  .setor-button {
+    padding: 8px 14px;
+    font-size: 0.86rem;
+  }
+
+  .organograma-scroll {
+    overflow-x: auto;
+    overflow-y: visible;
+    padding: 10px 4px 20px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .organograma-tree {
+    width: max-content;
+    max-width: none;
+    min-width: 100%;
+    gap: 12px;
+  }
+
+  .organograma-card {
+    width: clamp(135px, 38vw, 165px);
+  }
 }
