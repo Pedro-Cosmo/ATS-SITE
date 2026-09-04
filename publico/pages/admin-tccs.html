@@ -10,7 +10,7 @@
 <body class="admin-page">
   <div data-include="/includes/header.html"></div>
 
-  <main class="admin-main" data-admin-form-page data-admin-content-type="tccs" data-admin-storage-key="admin_tccs">
+  <main class="admin-main" data-admin-form-page data-admin-content-type="tccs">
     <section class="admin-shell" aria-labelledby="titulo-admin-form">
       <div class="admin-topbar">
         <div>
@@ -89,7 +89,7 @@
                 <input type="file" accept=".jpg,.jpeg,.png,.webp" data-file-input="imagem">
                 <div class="admin-dropzone-copy">
                   <strong>Arraste uma imagem ou selecione um arquivo</strong>
-                  <small>JPG, PNG ou WEBP. O upload real ser&aacute; feito no backend futuramente.</small>
+                  <small>JPG, PNG ou WEBP. A imagem ser&aacute; enviada ao Supabase Storage ao salvar.</small>
                 </div>
                 <button class="admin-button admin-button-secondary" type="button" data-file-trigger="imagem">Selecionar imagem</button>
                 <div class="admin-file-feedback" data-file-feedback="imagem"></div>
@@ -113,10 +113,7 @@
           </div>
 
           <div class="admin-form-actions">
-            <button class="admin-button" id="admin-form-generate" type="button">Gerar JSON</button>
-            <button class="admin-button" id="admin-form-save" type="button">Salvar temporariamente</button>
-            <button class="admin-button" id="admin-form-save-supabase" type="button">Salvar no Supabase</button>
-            <button class="admin-button admin-button-secondary" id="admin-form-copy" type="button">Copiar JSON</button>
+            <button class="admin-button" id="admin-form-save-supabase" type="submit">Salvar TCC</button>
             <button class="admin-button admin-button-secondary" id="admin-form-clear" type="button">Limpar formul&aacute;rio</button>
             <a class="admin-button admin-button-secondary" href="/pages/admin.html">Voltar ao painel</a>
           </div>
@@ -127,38 +124,8 @@
         <aside class="admin-tool-panel" aria-labelledby="preview-conteudo">
           <h2 id="preview-conteudo">Pr&eacute;-visualiza&ccedil;&atilde;o</h2>
           <div id="admin-content-preview" class="admin-content-preview"></div>
-          <pre id="admin-json-preview" class="admin-json-preview"></pre>
         </aside>
       </div>
-
-      <details class="admin-advanced">
-        <summary>Modo avan&ccedil;ado: JSON manual</summary>
-
-        <div class="admin-json-layout admin-json-layout-advanced">
-          <section class="admin-tool-panel" aria-labelledby="editor-json-manual">
-            <h2 id="editor-json-manual">JSON manual</h2>
-            <textarea id="admin-manual-json" class="admin-json-input" spellcheck="false" aria-label="JSON manual"></textarea>
-
-            <div class="admin-json-actions">
-              <button class="admin-button" id="admin-manual-validate" type="button">Validar JSON</button>
-              <button class="admin-button" id="admin-manual-save" type="button">Salvar JSON manual</button>
-              <button class="admin-button admin-button-secondary" id="admin-manual-clear" type="button">Limpar</button>
-            </div>
-
-            <p class="admin-status" id="admin-manual-status" role="status" aria-live="polite"></p>
-          </section>
-
-          <aside class="admin-tool-panel" aria-labelledby="preview-json-manual">
-            <h2 id="preview-json-manual">Preview formatado</h2>
-            <pre id="admin-manual-preview" class="admin-json-preview"></pre>
-          </aside>
-        </div>
-      </details>
-
-      <section class="admin-saved-section" aria-labelledby="itens-salvos">
-        <h2 id="itens-salvos">TCCs salvos temporariamente</h2>
-        <div class="admin-saved-list" id="admin-saved-list"></div>
-      </section>
     </section>
   </main>
 

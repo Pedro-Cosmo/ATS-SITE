@@ -1,78 +1,41 @@
 import { salvarConteudo } from "./admin-conteudos.js";
 import { definirPdfTcc, limparPdfTcc, uploadPdfTcc } from "./admin-tccs.js";
+import { supabase } from "./supabase-client.js";
+import { renderizarBlocosNoticia, SITE_IMAGE_BUCKET } from "./noticia-blocos.js";
 
 (() => {
   const CONFIGS = {
     noticias: {
       tipo: "noticia",
       prefix: "noticia",
-      storageKey: "admin_noticias",
       imageFolder: "noticias",
       requiresAuthor: false,
       requiresPdf: false,
       requiresYear: false,
       requiresDate: true,
-      sample: {
-        id: "noticia-exemplo",
-        tipo: "noticia",
-        titulo: "T\u00edtulo da not\u00edcia",
-        descricaoCurta: "Resumo curto",
-        descricaoLonga: "Texto completo da not\u00edcia",
-        imagem: "/assets/img/noticias/nome-da-imagem.jpg",
-        data: "2026-06-22",
-        autores: ["Autor 1"],
-        palavrasChave: ["palavra1", "palavra2"],
-      },
+      saveLabel: "notícia",
     },
     artigos: {
       tipo: "artigo",
       prefix: "artigo",
-      storageKey: "admin_artigos",
       imageFolder: "artigos",
-      pdfFolder: "ARTIGOS",
       storagePdfFolder: "artigos",
       requiresAuthor: true,
       requiresPdf: true,
       requiresYear: true,
       requiresDate: false,
-      sample: {
-        id: "artigo-exemplo",
-        tipo: "artigo",
-        titulo: "T\u00edtulo do artigo",
-        descricaoCurta: "Resumo curto",
-        descricaoLonga: "Resumo longo",
-        imagem: "/assets/img/artigos/nome-da-imagem.jpg",
-        pdf: "/assets/data/files-pdf/ARTIGOS/nome-do-arquivo.pdf",
-        autores: ["Autor 1", "Autor 2"],
-        palavrasChave: ["palavra1", "palavra2"],
-        ano: 2026,
-      },
+      saveLabel: "artigo",
     },
     tccs: {
       tipo: "tcc",
       prefix: "tcc",
-      storageKey: "admin_tccs",
       imageFolder: "tcc",
-      pdfFolder: "TCC",
       storagePdfFolder: "tccs",
       requiresAuthor: true,
       requiresPdf: true,
       requiresYear: true,
       requiresDate: false,
-      sample: {
-        id: "tcc-exemplo",
-        tipo: "tcc",
-        titulo: "T\u00edtulo do TCC",
-        descricaoCurta: "Resumo curto",
-        descricaoLonga: "Resumo longo",
-        imagem: "/assets/img/tcc/nome-da-imagem.jpg",
-        pdf: "/assets/data/files-pdf/TCC/nome-do-arquivo.pdf",
-        autores: ["Autor 1", "Autor 2"],
-        orientador: "Nome do orientador",
-        palavrasChave: ["palavra1", "palavra2"],
-        ano: 2026,
-        curso: "Engenharia de Controle e Automa\u00e7\u00e3o",
-      },
+      saveLabel: "TCC",
     },
   };
 
@@ -80,23 +43,16 @@ import { definirPdfTcc, limparPdfTcc, uploadPdfTcc } from "./admin-tccs.js";
   const PDF_EXTENSIONS = [".pdf"];
 
   const state = {
-    generatedJson: null,
     files: {
       imagem: null,
       pdf: null,
     },
     imagePreviewUrl: "",
+    blockPreviewUrls: new Map(),
+    blockSequence: 0,
   };
 
-  const getConfig = (page) => {
-    const type = page.dataset.adminContentType || "noticias";
-    const config = CONFIGS[type] || CONFIGS.noticias;
-
-    return {
-      ...config,
-      storageKey: page.dataset.adminStorageKey || config.storageKey,
-    };
-  };
+  const getConfig = (page) => CONFIGS[page.dataset.adminContentType] || CONFIGS.noticias;
 
   const slugify = (value) => String(value || "")
     .normalize("NFD")
@@ -112,12 +68,6 @@ import { definirPdfTcc, limparPdfTcc, uploadPdfTcc } from "./admin-tccs.js";
     return match ? match[0].toLowerCase() : "";
   };
 
-  const sanitizeFileName = (fileName) => {
-    const extension = getFileExtension(fileName);
-    const baseName = extension ? fileName.slice(0, -extension.length) : fileName;
-    return `${slugify(baseName) || "arquivo"}${extension}`;
-  };
-
   const formatBytes = (bytes) => {
     if (!Number.isFinite(bytes)) return "";
     if (bytes < 1024) return `${bytes} B`;
@@ -125,36 +75,17 @@ import { definirPdfTcc, limparPdfTcc, uploadPdfTcc } from "./admin-tccs.js";
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   };
 
-  const getExpectedFilePath = (file, kind, config) => {
-    if (!file) return "";
-
-    const fileName = sanitizeFileName(file.name);
-
-    if (kind === "imagem") {
-      return `/assets/img/${config.imageFolder}/${fileName}`;
-    }
-
-    return `/assets/data/files-pdf/${config.pdfFolder}/${fileName}`;
+  const createElement = (tag, className, text) => {
+    const element = document.createElement(tag);
+    if (className) element.className = className;
+    if (typeof text === "string") element.textContent = text;
+    return element;
   };
 
-  const getStorageItems = (storageKey) => {
-    try {
-      const value = JSON.parse(window.localStorage.getItem(storageKey) || "[]");
-      return Array.isArray(value) ? value : [];
-    } catch (error) {
-      return [];
-    }
-  };
-
-  const saveStorageItem = (storageKey, item) => {
-    const items = getStorageItems(storageKey);
-    items.push(item);
-    window.localStorage.setItem(storageKey, JSON.stringify(items));
-    return items;
-  };
-
-  const setStorageItems = (storageKey, items) => {
-    window.localStorage.setItem(storageKey, JSON.stringify(items));
+  const createButton = (text, className = "admin-button admin-button-secondary") => {
+    const button = createElement("button", className, text);
+    button.type = "button";
+    return button;
   };
 
   const setStatus = (element, message, type = "") => {
@@ -170,14 +101,11 @@ import { definirPdfTcc, limparPdfTcc, uploadPdfTcc } from "./admin-tccs.js";
     return field ? field.value.trim() : "";
   };
 
-  const createElement = (tag, className, text) => {
-    const element = document.createElement(tag);
-    if (className) element.className = className;
-    if (typeof text === "string") element.textContent = text;
-    return element;
+  const notifyPreview = (page) => {
+    page.dispatchEvent(new CustomEvent("admin:preview-change"));
   };
 
-  const addRepeatItem = (control, value) => {
+  const addRepeatItem = (control, value, page) => {
     const text = String(value || "").trim();
     if (!text) return;
 
@@ -188,13 +116,16 @@ import { definirPdfTcc, limparPdfTcc, uploadPdfTcc } from "./admin-tccs.js";
     chip.dataset.repeatValue = text;
     chip.appendChild(document.createTextNode(text));
 
-    const remove = createElement("button", "", "\u00d7");
-    remove.type = "button";
+    const remove = createButton("×", "");
     remove.setAttribute("aria-label", `Remover ${text}`);
-    remove.addEventListener("click", () => chip.remove());
+    remove.addEventListener("click", () => {
+      chip.remove();
+      notifyPreview(page);
+    });
 
     chip.appendChild(remove);
     items.appendChild(chip);
+    notifyPreview(page);
   };
 
   const setupRepeatLists = (page) => {
@@ -204,22 +135,17 @@ import { definirPdfTcc, limparPdfTcc, uploadPdfTcc } from "./admin-tccs.js";
 
       const addCurrentValue = () => {
         if (!input) return;
-        addRepeatItem(control, input.value);
+        addRepeatItem(control, input.value, page);
         input.value = "";
         input.focus();
       };
 
-      if (addButton) {
-        addButton.addEventListener("click", addCurrentValue);
-      }
-
-      if (input) {
-        input.addEventListener("keydown", (event) => {
-          if (event.key !== "Enter") return;
-          event.preventDefault();
-          addCurrentValue();
-        });
-      }
+      addButton?.addEventListener("click", addCurrentValue);
+      input?.addEventListener("keydown", (event) => {
+        if (event.key !== "Enter") return;
+        event.preventDefault();
+        addCurrentValue();
+      });
     });
   };
 
@@ -227,20 +153,19 @@ import { definirPdfTcc, limparPdfTcc, uploadPdfTcc } from "./admin-tccs.js";
     const control = page.querySelector(`[data-repeat-list="${name}"]`);
     if (!control) return [];
 
-    const chipValues = Array.from(control.querySelectorAll("[data-repeat-value]"))
+    const values = Array.from(control.querySelectorAll("[data-repeat-value]"))
       .map((item) => item.dataset.repeatValue.trim())
       .filter(Boolean);
     const input = control.querySelector("[data-repeat-input]");
     const pendingValue = input ? input.value.trim() : "";
 
-    return [...chipValues, pendingValue].filter(Boolean);
+    return [...values, pendingValue].filter(Boolean);
   };
 
   const clearRepeatLists = (page) => {
     page.querySelectorAll("[data-repeat-list]").forEach((control) => {
-      const items = control.querySelector("[data-repeat-items]");
+      control.querySelector("[data-repeat-items]")?.replaceChildren();
       const input = control.querySelector("[data-repeat-input]");
-      if (items) items.innerHTML = "";
       if (input) input.value = "";
     });
   };
@@ -249,77 +174,95 @@ import { definirPdfTcc, limparPdfTcc, uploadPdfTcc } from "./admin-tccs.js";
     if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
     const [year, month, day] = value.split("-").map(Number);
     const date = new Date(year, month - 1, day);
-    return date.getFullYear() === year
-      && date.getMonth() === month - 1
-      && date.getDate() === day;
+    return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day;
   };
 
   const isNumericYear = (value) => /^\d{4}$/.test(String(value || "").trim());
 
-  const validateContent = (item, config) => {
-    const errors = [];
-    const warnings = [];
-
-    if (!item.titulo) errors.push("Informe o t\u00edtulo.");
-    if (!item.descricaoCurta) errors.push("Informe a descri\u00e7\u00e3o curta.");
-
-    if (config.requiresAuthor && (!Array.isArray(item.autores) || !item.autores.length)) {
-      errors.push("Adicione ao menos um autor.");
-    }
-
-    if (config.requiresYear && !isNumericYear(item.ano)) {
-      errors.push("Informe um ano num\u00e9rico com 4 d\u00edgitos.");
-    }
-
-    if (config.requiresDate && !isValidDate(item.data)) {
-      errors.push("Informe uma data v\u00e1lida.");
-    }
-
-    if (config.requiresPdf && !item.pdf) {
-      errors.push("Selecione um PDF.");
-    }
-
-    if (!item.imagem) {
-      warnings.push("Imagem n\u00e3o selecionada. Ela \u00e9 opcional, mas recomendada.");
-    }
-
-    return { errors, warnings };
+  const getBlockImagePath = (input, preview) => {
+    if (!input) return "";
+    if (preview && state.blockPreviewUrls.has(input)) return state.blockPreviewUrls.get(input);
+    return input.dataset.storagePath || "";
   };
 
-  const buildContentObject = (page, config) => {
+  const readImageData = (container, preview) => {
+    const input = container.querySelector("[data-news-image-input]");
+    const caption = container.querySelector("[data-news-image-caption]");
+    return {
+      path: getBlockImagePath(input, preview),
+      legenda: caption ? caption.value.trim() : "",
+    };
+  };
+
+  const buildNewsBlocks = (page, preview = false) => Array.from(page.querySelectorAll("[data-news-block]"))
+    .map((block) => {
+      const type = block.dataset.blockType;
+
+      if (type === "paragrafo") {
+        return { tipo: type, texto: block.querySelector("textarea")?.value.trim() || "" };
+      }
+
+      if (type === "imagem") {
+        return { tipo: type, ...readImageData(block, preview) };
+      }
+
+      if (type === "duas_imagens" || type === "galeria") {
+        return {
+          tipo: type,
+          imagens: Array.from(block.querySelectorAll("[data-news-image-item]"))
+            .map((item) => readImageData(item, preview)),
+        };
+      }
+
+      if (type === "citacao") {
+        return {
+          tipo: type,
+          texto: block.querySelector("[data-quote-text]")?.value.trim() || "",
+          fonte: block.querySelector("[data-quote-source]")?.value.trim() || "",
+        };
+      }
+
+      if (type === "tabela") {
+        return {
+          tipo: type,
+          cabecalhos: Array.from(block.querySelectorAll("[data-table-header]"))
+            .map((input) => input.value.trim()),
+          linhas: Array.from(block.querySelectorAll("[data-table-row]"))
+            .map((row) => Array.from(row.querySelectorAll("[data-table-cell]"))
+              .map((input) => input.value.trim())),
+        };
+      }
+
+      return null;
+    })
+    .filter(Boolean);
+
+  const buildContentObject = (page, config, preview = false) => {
     const title = getFieldValue(page, "titulo");
-    const authors = getRepeatValues(page, "autores");
-    const keywords = getRepeatValues(page, "palavrasChave");
-    const imagePath = getExpectedFilePath(state.files.imagem, "imagem", config);
-
-    if (config.tipo === "noticia") {
-      return {
-        id: generateId(title, config),
-        tipo: config.tipo,
-        titulo: title,
-        descricaoCurta: getFieldValue(page, "descricaoCurta"),
-        descricaoLonga: getFieldValue(page, "descricaoLonga"),
-        imagem: imagePath,
-        data: getFieldValue(page, "data"),
-        autores: authors,
-        palavrasChave: keywords,
-      };
-    }
-
-    const pdfPath = getExpectedFilePath(state.files.pdf, "pdf", config);
-    const year = getFieldValue(page, "ano");
+    const imageInput = page.querySelector('[data-file-input="imagem"]');
+    const imagePath = preview && state.imagePreviewUrl
+      ? state.imagePreviewUrl
+      : imageInput?.dataset.storagePath || "";
     const item = {
       id: generateId(title, config),
       tipo: config.tipo,
       titulo: title,
       descricaoCurta: getFieldValue(page, "descricaoCurta"),
-      descricaoLonga: getFieldValue(page, "descricaoLonga"),
       imagem: imagePath,
-      pdf: pdfPath,
-      autores: authors,
-      palavrasChave: keywords,
-      ano: isNumericYear(year) ? Number(year) : year,
+      autores: getRepeatValues(page, "autores"),
+      palavrasChave: getRepeatValues(page, "palavrasChave"),
     };
+
+    if (config.tipo === "noticia") {
+      item.data = getFieldValue(page, "data");
+      item.blocos = buildNewsBlocks(page, preview);
+      return item;
+    }
+
+    const year = getFieldValue(page, "ano");
+    item.descricaoLonga = getFieldValue(page, "descricaoLonga");
+    item.pdf = page.querySelector('[data-file-input="pdf"]')?.dataset.storagePath || "";
+    item.ano = isNumericYear(year) ? Number(year) : year;
 
     if (config.tipo === "tcc") {
       item.orientador = getFieldValue(page, "orientador");
@@ -329,14 +272,51 @@ import { definirPdfTcc, limparPdfTcc, uploadPdfTcc } from "./admin-tccs.js";
     return item;
   };
 
-  const renderJson = (element, item) => {
-    if (!element) return;
-    element.textContent = item ? JSON.stringify(item, null, 2) : "";
+  const validateNewsBlocks = (blocks) => {
+    const errors = [];
+
+    if (!blocks.length) {
+      errors.push("Adicione ao menos um bloco ao corpo da notícia.");
+      return errors;
+    }
+
+    blocks.forEach((block, index) => {
+      const label = `Bloco ${index + 1}`;
+      if (block.tipo === "paragrafo" && !block.texto) errors.push(`${label}: escreva o parágrafo.`);
+      if (block.tipo === "imagem" && !block.path) errors.push(`${label}: selecione a imagem.`);
+      if (block.tipo === "duas_imagens" && block.imagens.some((image) => !image.path)) {
+        errors.push(`${label}: selecione as duas imagens.`);
+      }
+      if (block.tipo === "galeria" && (!block.imagens.length || block.imagens.some((image) => !image.path))) {
+        errors.push(`${label}: selecione todas as imagens da galeria.`);
+      }
+      if (block.tipo === "citacao" && !block.texto) errors.push(`${label}: escreva a citação.`);
+      if (block.tipo === "tabela" && (!block.cabecalhos.length || !block.linhas.length)) {
+        errors.push(`${label}: mantenha ao menos uma linha e uma coluna.`);
+      }
+    });
+
+    return errors;
+  };
+
+  const validateContent = (item, config) => {
+    const errors = [];
+    const warnings = [];
+
+    if (!item.titulo) errors.push("Informe o título.");
+    if (!item.descricaoCurta) errors.push("Informe a descrição curta.");
+    if (config.requiresAuthor && !item.autores.length) errors.push("Adicione ao menos um autor.");
+    if (config.requiresYear && !isNumericYear(item.ano)) errors.push("Informe um ano numérico com 4 dígitos.");
+    if (config.requiresDate && !isValidDate(item.data)) errors.push("Informe uma data válida.");
+    if (config.requiresPdf && !state.files.pdf && !item.pdf) errors.push("Selecione um PDF.");
+    if (config.tipo === "noticia") errors.push(...validateNewsBlocks(item.blocos));
+    if (!item.imagem) warnings.push("Imagem de capa não selecionada. Ela é opcional, mas recomendada.");
+
+    return { errors, warnings };
   };
 
   const addPreviewLine = (list, label, value, isLink = false) => {
     if (!value) return;
-
     const term = createElement("dt", "", label);
     const description = createElement("dd");
 
@@ -353,167 +333,382 @@ import { definirPdfTcc, limparPdfTcc, uploadPdfTcc } from "./admin-tccs.js";
     list.append(term, description);
   };
 
-  const renderFriendlyPreview = (container, item, imagePreviewSrc = "") => {
-    if (!container) return;
-    container.innerHTML = "";
-
-    if (!item) {
-      container.appendChild(createElement("p", "admin-empty", "Gere um JSON para visualizar o conte\u00fado."));
-      return;
-    }
-
-    const title = createElement("h3", "", item.titulo || "Sem t\u00edtulo");
-    const description = createElement("p", "admin-preview-description", item.descricaoCurta || "Sem descri\u00e7\u00e3o curta.");
-    const list = createElement("dl", "admin-preview-list");
-
-    addPreviewLine(list, "Tipo", item.tipo);
-    addPreviewLine(list, "ID", item.id);
-    addPreviewLine(list, "Autores", Array.isArray(item.autores) ? item.autores.join(", ") : "");
-    addPreviewLine(list, "Palavras-chave", Array.isArray(item.palavrasChave) ? item.palavrasChave.join(", ") : "");
-    addPreviewLine(list, "Ano/Data", item.ano || item.data || "");
-    addPreviewLine(list, "Orientador", item.orientador || "");
-    addPreviewLine(list, "Curso", item.curso || "");
-    addPreviewLine(list, "Imagem", item.imagem || "");
-    addPreviewLine(list, "PDF", item.pdf || "", true);
-
-    container.append(title, description, list);
-
-    if (imagePreviewSrc) {
-      const image = createElement("img", "admin-preview-image");
-      image.src = imagePreviewSrc;
-      image.alt = item.titulo || "Pr\u00e9via da imagem";
-      container.appendChild(image);
-    }
+  const formatDate = (value) => {
+    if (!isValidDate(value)) return value;
+    const [year, month, day] = value.split("-").map(Number);
+    return new Intl.DateTimeFormat("pt-BR").format(new Date(year, month - 1, day));
   };
 
-  const generateContent = (page, config, elements, showSuccess = true) => {
-    const item = buildContentObject(page, config);
-    const validation = validateContent(item, config);
+  const renderNewsPreview = (container, item) => {
+    container.replaceChildren();
+    const article = createElement("article", "admin-news-preview");
+    const header = createElement("header", "admin-news-preview-header");
+    header.appendChild(createElement("h3", "", item.titulo || "Título da notícia"));
+    header.appendChild(createElement("p", "admin-preview-description", item.descricaoCurta || "Subtítulo da notícia"));
 
-    if (validation.errors.length) {
-      state.generatedJson = null;
-      renderJson(elements.jsonPreview, null);
-      renderFriendlyPreview(elements.contentPreview, null);
-      setStatus(elements.formStatus, validation.errors.join(" "), "error");
-      return null;
+    const meta = createElement("div", "admin-news-preview-meta");
+    if (item.data) meta.appendChild(createElement("time", "", formatDate(item.data)));
+    if (item.autores.length) meta.appendChild(createElement("span", "", `Por ${item.autores.join(", ")}`));
+    if (meta.children.length) header.appendChild(meta);
+    article.appendChild(header);
+
+    if (item.imagem) {
+      const cover = createElement("img", "admin-news-preview-cover");
+      cover.src = item.imagem;
+      cover.alt = item.titulo || "Imagem de capa da notícia";
+      article.appendChild(cover);
     }
 
-    state.generatedJson = item;
-    renderJson(elements.jsonPreview, item);
-    renderFriendlyPreview(elements.contentPreview, item, state.imagePreviewUrl);
+    if (item.palavrasChave.length) {
+      const keywords = createElement("ul", "admin-news-preview-keywords");
+      item.palavrasChave.forEach((keyword) => keywords.appendChild(createElement("li", "", keyword)));
+      article.appendChild(keywords);
+    }
 
-    if (showSuccess) {
-      const warning = validation.warnings.length ? ` ${validation.warnings.join(" ")}` : "";
-      setStatus(elements.formStatus, `JSON gerado com sucesso.${warning}`, validation.warnings.length ? "warning" : "success");
+    const body = createElement("div", "noticia-blocos admin-news-preview-body");
+    renderizarBlocosNoticia(body, item.blocos, { resolverImagem: (path) => path });
+    if (!body.children.length) {
+      body.appendChild(createElement("p", "admin-empty", "Adicione blocos para visualizar o corpo da notícia."));
+    }
+    article.appendChild(body);
+    container.appendChild(article);
+  };
+
+  const renderStandardPreview = (container, item) => {
+    container.replaceChildren();
+    const title = createElement("h3", "", item.titulo || "Sem título");
+    const description = createElement("p", "admin-preview-description", item.descricaoCurta || "Sem descrição curta.");
+    const list = createElement("dl", "admin-preview-list");
+    addPreviewLine(list, "Tipo", item.tipo);
+    addPreviewLine(list, "Autores", item.autores.join(", "));
+    addPreviewLine(list, "Palavras-chave", item.palavrasChave.join(", "));
+    addPreviewLine(list, "Ano", item.ano || "");
+    addPreviewLine(list, "Orientador", item.orientador || "");
+    addPreviewLine(list, "Curso", item.curso || "");
+    addPreviewLine(list, "PDF", item.pdf || "", true);
+    container.append(title, description);
+
+    if (item.imagem) {
+      const image = createElement("img", "admin-preview-image");
+      image.src = item.imagem;
+      image.alt = item.titulo || "Prévia da imagem";
+      container.appendChild(image);
+    }
+
+    container.appendChild(list);
+  };
+
+  const renderCurrentPreview = (page, config, elements) => {
+    if (!elements.contentPreview) return;
+    const item = buildContentObject(page, config, true);
+    if (config.tipo === "noticia") renderNewsPreview(elements.contentPreview, item);
+    else renderStandardPreview(elements.contentPreview, item);
+  };
+
+  const updateBlockPreviewUrl = (input, file) => {
+    const previous = state.blockPreviewUrls.get(input);
+    if (previous) URL.revokeObjectURL(previous);
+    state.blockPreviewUrls.delete(input);
+
+    if (file) state.blockPreviewUrls.set(input, URL.createObjectURL(file));
+  };
+
+  const cleanupBlockPreviews = (container) => {
+    container.querySelectorAll("[data-news-image-input]").forEach((input) => {
+      const previewUrl = state.blockPreviewUrls.get(input);
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+      state.blockPreviewUrls.delete(input);
+    });
+  };
+
+  const setupNewsImageInput = (input, feedback, page, elements) => {
+    input.addEventListener("change", () => {
+      const file = input.files[0] || null;
+      const extension = getFileExtension(file?.name);
+      input.dataset.storagePath = "";
+
+      if (file && !IMAGE_EXTENSIONS.includes(extension)) {
+        input.value = "";
+        updateBlockPreviewUrl(input, null);
+        feedback.textContent = "Use uma imagem JPG, PNG ou WEBP.";
+        setStatus(elements.formStatus, "Imagem inválida. Use JPG, PNG ou WEBP.", "error");
+        notifyPreview(page);
+        return;
+      }
+
+      updateBlockPreviewUrl(input, file);
+      feedback.textContent = file ? `${file.name} (${formatBytes(file.size)})` : "";
+      setStatus(elements.formStatus, "");
+      notifyPreview(page);
+    });
+  };
+
+  const createNewsImageItem = (page, elements, label, removable = false) => {
+    const item = createElement("div", "admin-block-image-item");
+    item.dataset.newsImageItem = "";
+    const field = createElement("label", "admin-field admin-block-file");
+    field.appendChild(createElement("span", "", label));
+
+    const input = createElement("input");
+    input.type = "file";
+    input.accept = ".jpg,.jpeg,.png,.webp";
+    input.dataset.newsImageInput = "";
+    const feedback = createElement("small", "admin-file-feedback");
+    setupNewsImageInput(input, feedback, page, elements);
+    field.append(input, feedback);
+
+    const captionField = createElement("label", "admin-field");
+    captionField.appendChild(createElement("span", "", "Legenda (opcional)"));
+    const caption = createElement("input");
+    caption.type = "text";
+    caption.dataset.newsImageCaption = "";
+    captionField.appendChild(caption);
+    item.append(field, captionField);
+
+    if (removable) {
+      const remove = createButton("Remover imagem", "admin-button admin-button-danger admin-block-remove-image");
+      remove.addEventListener("click", () => {
+        cleanupBlockPreviews(item);
+        item.remove();
+        notifyPreview(page);
+      });
+      item.appendChild(remove);
     }
 
     return item;
   };
 
-  const parseManualJson = (input) => {
-    const raw = input ? input.value.trim() : "";
-
-    if (!raw) {
-      throw new Error("Cole um JSON antes de validar.");
-    }
-
-    const parsed = JSON.parse(raw);
-
-    if (!parsed || Array.isArray(parsed) || typeof parsed !== "object") {
-      throw new Error("O JSON precisa ser um objeto.");
-    }
-
-    return parsed;
+  const updateBlockControls = (list) => {
+    const blocks = Array.from(list.querySelectorAll(":scope > [data-news-block]"));
+    blocks.forEach((block, index) => {
+      block.querySelector("[data-block-title]").textContent = `${index + 1}. ${block.dataset.blockLabel}`;
+      block.querySelector("[data-block-up]").disabled = index === 0;
+      block.querySelector("[data-block-down]").disabled = index === blocks.length - 1;
+    });
   };
 
-  const copyText = async (text) => {
-    if (!text) {
-      throw new Error("Nenhum JSON gerado para copiar.");
-    }
+  const createTableEditor = (block, page) => {
+    const table = createElement("table", "admin-editable-table");
+    const thead = createElement("thead");
+    const headerRow = createElement("tr");
+    const tbody = createElement("tbody");
+    thead.appendChild(headerRow);
+    table.append(thead, tbody);
 
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      await navigator.clipboard.writeText(text);
-      return;
-    }
+    const createTableInput = (kind, value = "") => {
+      const input = createElement("input");
+      input.type = "text";
+      input.value = value;
+      input.dataset[kind] = "";
+      return input;
+    };
 
-    const fallback = document.createElement("textarea");
-    fallback.value = text;
-    fallback.setAttribute("readonly", "");
-    fallback.style.position = "fixed";
-    fallback.style.left = "-9999px";
-    document.body.appendChild(fallback);
-    fallback.select();
-    document.execCommand("copy");
-    fallback.remove();
+    const addColumn = () => {
+      const th = createElement("th");
+      th.appendChild(createTableInput("tableHeader", `Coluna ${headerRow.children.length + 1}`));
+      headerRow.appendChild(th);
+      Array.from(tbody.rows).forEach((row) => {
+        const cell = row.insertCell();
+        cell.appendChild(createTableInput("tableCell"));
+      });
+      notifyPreview(page);
+    };
+
+    const removeColumn = () => {
+      if (headerRow.children.length <= 1) return;
+      headerRow.lastElementChild.remove();
+      Array.from(tbody.rows).forEach((row) => row.lastElementChild?.remove());
+      notifyPreview(page);
+    };
+
+    const addRow = () => {
+      const row = createElement("tr");
+      row.dataset.tableRow = "";
+      Array.from({ length: headerRow.children.length }).forEach(() => {
+        const cell = createElement("td");
+        cell.appendChild(createTableInput("tableCell"));
+        row.appendChild(cell);
+      });
+      tbody.appendChild(row);
+      notifyPreview(page);
+    };
+
+    const removeRow = () => {
+      if (tbody.rows.length <= 1) return;
+      tbody.lastElementChild.remove();
+      notifyPreview(page);
+    };
+
+    addColumn();
+    addColumn();
+    addRow();
+    addRow();
+
+    const actions = createElement("div", "admin-table-actions");
+    const addRowButton = createButton("Adicionar linha");
+    const addColumnButton = createButton("Adicionar coluna");
+    const removeRowButton = createButton("Remover linha", "admin-button admin-button-danger");
+    const removeColumnButton = createButton("Remover coluna", "admin-button admin-button-danger");
+    addRowButton.addEventListener("click", addRow);
+    addColumnButton.addEventListener("click", addColumn);
+    removeRowButton.addEventListener("click", removeRow);
+    removeColumnButton.addEventListener("click", removeColumn);
+    actions.append(addRowButton, addColumnButton, removeRowButton, removeColumnButton);
+
+    const scroll = createElement("div", "admin-table-scroll");
+    scroll.appendChild(table);
+    block.append(scroll, actions);
   };
 
-  const resetFileState = (page) => {
-    if (state.imagePreviewUrl) {
-      URL.revokeObjectURL(state.imagePreviewUrl);
+  const createNewsBlock = (type, page, elements) => {
+    const labels = {
+      paragrafo: "Parágrafo",
+      imagem: "Imagem",
+      duas_imagens: "Duas imagens",
+      galeria: "Galeria",
+      citacao: "Citação",
+      tabela: "Tabela",
+    };
+    const list = page.querySelector("[data-news-block-list]");
+    if (!list || !labels[type]) return;
+
+    state.blockSequence += 1;
+    const block = createElement("section", "admin-news-block");
+    block.dataset.newsBlock = String(state.blockSequence);
+    block.dataset.blockType = type;
+    block.dataset.blockLabel = labels[type];
+
+    const header = createElement("div", "admin-news-block-header");
+    const title = createElement("h3", "", labels[type]);
+    title.dataset.blockTitle = "";
+    const actions = createElement("div", "admin-news-block-actions");
+    const up = createButton("↑", "admin-block-icon-button");
+    const down = createButton("↓", "admin-block-icon-button");
+    const remove = createButton("Excluir", "admin-button admin-button-danger");
+    up.dataset.blockUp = "";
+    down.dataset.blockDown = "";
+    up.setAttribute("aria-label", "Mover bloco para cima");
+    down.setAttribute("aria-label", "Mover bloco para baixo");
+    actions.append(up, down, remove);
+    header.append(title, actions);
+    block.appendChild(header);
+
+    if (type === "paragrafo") {
+      const field = createElement("label", "admin-field");
+      field.appendChild(createElement("span", "", "Texto do parágrafo"));
+      const textarea = createElement("textarea");
+      textarea.rows = 6;
+      field.appendChild(textarea);
+      block.appendChild(field);
+    } else if (type === "imagem") {
+      block.appendChild(createNewsImageItem(page, elements, "Imagem"));
+    } else if (type === "duas_imagens") {
+      const grid = createElement("div", "admin-two-image-grid");
+      grid.append(
+        createNewsImageItem(page, elements, "Imagem 1"),
+        createNewsImageItem(page, elements, "Imagem 2"),
+      );
+      block.appendChild(grid);
+    } else if (type === "galeria") {
+      const images = createElement("div", "admin-gallery-items");
+      const addImage = createButton("+ Adicionar imagem");
+      addImage.addEventListener("click", () => {
+        images.appendChild(createNewsImageItem(page, elements, `Imagem ${images.children.length + 1}`, true));
+        notifyPreview(page);
+      });
+      images.appendChild(createNewsImageItem(page, elements, "Imagem 1", true));
+      block.append(images, addImage);
+    } else if (type === "citacao") {
+      const quoteField = createElement("label", "admin-field");
+      quoteField.appendChild(createElement("span", "", "Citação"));
+      const textarea = createElement("textarea");
+      textarea.dataset.quoteText = "";
+      quoteField.appendChild(textarea);
+      const sourceField = createElement("label", "admin-field");
+      sourceField.appendChild(createElement("span", "", "Autor / fonte (opcional)"));
+      const source = createElement("input");
+      source.type = "text";
+      source.dataset.quoteSource = "";
+      sourceField.appendChild(source);
+      block.append(quoteField, sourceField);
+    } else if (type === "tabela") {
+      createTableEditor(block, page);
     }
 
-    state.files.imagem = null;
-    state.files.pdf = null;
-    state.imagePreviewUrl = "";
-    limparPdfTcc();
-
-    page.querySelectorAll("[data-file-input]").forEach((input) => {
-      input.value = "";
+    up.addEventListener("click", () => {
+      const previous = block.previousElementSibling;
+      if (previous) list.insertBefore(block, previous);
+      updateBlockControls(list);
+      notifyPreview(page);
+    });
+    down.addEventListener("click", () => {
+      const next = block.nextElementSibling;
+      if (next) list.insertBefore(next, block);
+      updateBlockControls(list);
+      notifyPreview(page);
+    });
+    remove.addEventListener("click", () => {
+      cleanupBlockPreviews(block);
+      block.remove();
+      updateBlockControls(list);
+      notifyPreview(page);
     });
 
-    page.querySelectorAll("[data-file-feedback]").forEach((element) => {
-      element.textContent = "";
-    });
-
-    const imagePreview = page.querySelector("[data-image-preview]");
-    if (imagePreview) {
-      imagePreview.hidden = true;
-      imagePreview.removeAttribute("src");
-    }
+    list.appendChild(block);
+    updateBlockControls(list);
+    notifyPreview(page);
   };
 
-  const clearForm = (page, elements) => {
-    const form = page.querySelector("#admin-content-form");
-    if (form) form.reset();
-
-    clearRepeatLists(page);
-    resetFileState(page);
-    state.generatedJson = null;
-    renderJson(elements.jsonPreview, null);
-    renderFriendlyPreview(elements.contentPreview, null);
-    setStatus(elements.formStatus, "Formul\u00e1rio limpo.", "success");
+  const setupNewsBlockEditor = (page, elements) => {
+    page.querySelectorAll("[data-add-news-block]").forEach((button) => {
+      button.addEventListener("click", () => createNewsBlock(button.dataset.addNewsBlock, page, elements));
+    });
   };
 
   const handleFile = (file, kind, page, config, elements) => {
     if (!file) return;
-
     const allowed = kind === "imagem" ? IMAGE_EXTENSIONS : PDF_EXTENSIONS;
     const extension = getFileExtension(file.name);
+    const input = page.querySelector(`[data-file-input="${kind}"]`);
     const feedback = page.querySelector(`[data-file-feedback="${kind}"]`);
 
     if (!allowed.includes(extension)) {
+      state.files[kind] = null;
+      if (input) {
+        input.value = "";
+        input.dataset.storagePath = "";
+      }
+      if (kind === "imagem") {
+        if (state.imagePreviewUrl) URL.revokeObjectURL(state.imagePreviewUrl);
+        state.imagePreviewUrl = "";
+        const preview = page.querySelector("[data-image-preview]");
+        if (preview) {
+          preview.hidden = true;
+          preview.removeAttribute("src");
+        }
+      } else {
+        limparPdfTcc();
+      }
+      if (feedback) feedback.textContent = "";
       setStatus(elements.formStatus, kind === "imagem"
-        ? "Imagem inv\u00e1lida. Use JPG, PNG ou WEBP."
-        : "PDF inv\u00e1lido. Use um arquivo .pdf.", "error");
+        ? "Imagem inválida. Use JPG, PNG ou WEBP."
+        : "PDF inválido. Use um arquivo .pdf.", "error");
+      notifyPreview(page);
       return;
     }
 
     if (kind === "pdf" && config.requiresPdf && !definirPdfTcc(file)) {
       state.files.pdf = null;
-      setStatus(elements.formStatus, "Selecione um PDF valido de ate 10 MB.", "error");
+      setStatus(elements.formStatus, "Selecione um PDF válido de até 10 MB.", "error");
       return;
     }
 
-    // TODO: futuramente substituir este comportamento por upload real usando Node.js/Supabase Storage.
     state.files[kind] = file;
+    if (input) input.dataset.storagePath = "";
 
     if (kind === "imagem") {
-      if (state.imagePreviewUrl) {
-        URL.revokeObjectURL(state.imagePreviewUrl);
-      }
-
+      if (state.imagePreviewUrl) URL.revokeObjectURL(state.imagePreviewUrl);
       state.imagePreviewUrl = URL.createObjectURL(file);
-
       const preview = page.querySelector("[data-image-preview]");
       if (preview) {
         preview.src = state.imagePreviewUrl;
@@ -522,17 +717,10 @@ import { definirPdfTcc, limparPdfTcc, uploadPdfTcc } from "./admin-tccs.js";
     }
 
     if (feedback) {
-      const path = getExpectedFilePath(file, kind, config);
-      feedback.textContent = kind === "pdf" && config.requiresPdf
-        ? `${file.name} (${formatBytes(file.size)}) - sera enviado ao Supabase Storage ao salvar`
-        : kind === "pdf"
-        ? `${file.name} (${formatBytes(file.size)}) -> ${path}`
-        : `${file.name} -> ${path}`;
+      feedback.textContent = `${file.name} (${formatBytes(file.size)}) — será enviado ao Supabase Storage ao salvar`;
     }
-
-    setStatus(elements.formStatus, kind === "pdf" && config.requiresPdf
-      ? "PDF selecionado. Ele sera enviado ao Supabase Storage ao salvar."
-      : "Arquivo selecionado. O upload real ainda n\u00e3o foi implementado.", "warning");
+    setStatus(elements.formStatus, "Arquivo selecionado e pronto para envio.", "success");
+    notifyPreview(page);
   };
 
   const setupFileDrop = (page, config, elements) => {
@@ -540,16 +728,8 @@ import { definirPdfTcc, limparPdfTcc, uploadPdfTcc } from "./admin-tccs.js";
       const kind = zone.dataset.fileDrop;
       const input = zone.querySelector(`[data-file-input="${kind}"]`);
       const trigger = zone.querySelector(`[data-file-trigger="${kind}"]`);
-
-      if (trigger && input) {
-        trigger.addEventListener("click", () => input.click());
-      }
-
-      if (input) {
-        input.addEventListener("change", () => {
-          handleFile(input.files[0], kind, page, config, elements);
-        });
-      }
+      trigger?.addEventListener("click", () => input?.click());
+      input?.addEventListener("change", () => handleFile(input.files[0], kind, page, config, elements));
 
       ["dragenter", "dragover"].forEach((eventName) => {
         zone.addEventListener(eventName, (event) => {
@@ -557,250 +737,173 @@ import { definirPdfTcc, limparPdfTcc, uploadPdfTcc } from "./admin-tccs.js";
           zone.classList.add("is-dragging");
         });
       });
-
       ["dragleave", "drop"].forEach((eventName) => {
         zone.addEventListener(eventName, (event) => {
           event.preventDefault();
           zone.classList.remove("is-dragging");
         });
       });
-
       zone.addEventListener("drop", (event) => {
-        const file = event.dataTransfer && event.dataTransfer.files ? event.dataTransfer.files[0] : null;
+        const file = event.dataTransfer?.files?.[0] || null;
+        if (file && input && typeof DataTransfer === "function") {
+          const transfer = new DataTransfer();
+          transfer.items.add(file);
+          input.files = transfer.files;
+        }
         handleFile(file, kind, page, config, elements);
       });
     });
   };
 
-  const getSummaryDate = (item) => item.ano || item.data || "Sem ano/data";
+  const createUniqueSuffix = () => {
+    if (globalThis.crypto?.randomUUID) return globalThis.crypto.randomUUID();
+    return `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+  };
 
-  const renderSavedItems = (page, config, elements) => {
-    const list = elements.savedList;
-    if (!list) return;
+  const buildImageStoragePath = (file, folder, title, label) => {
+    const extension = getFileExtension(file.name) || ".jpg";
+    const titleSlug = slugify(title) || "conteudo";
+    const labelSlug = slugify(label) || "imagem";
+    return `${folder}/${titleSlug}-${labelSlug}-${createUniqueSuffix()}${extension}`;
+  };
 
-    const items = getStorageItems(config.storageKey);
-    list.innerHTML = "";
+  const uploadImage = async (file, storagePath) => {
+    const { data, error } = await supabase.storage
+      .from(SITE_IMAGE_BUCKET)
+      .upload(storagePath, file, { cacheControl: "3600", upsert: false });
 
-    if (!items.length) {
-      list.appendChild(createElement("p", "admin-empty", `Nenhum item salvo em ${config.storageKey}.`));
+    if (error) throw new Error(`Falha no upload de ${file.name}: ${error.message}`);
+    return data.path;
+  };
+
+  const uploadSelectedImages = async (page, config, title, elements) => {
+    const coverInput = page.querySelector('[data-file-input="imagem"]');
+    if (state.files.imagem && coverInput && !coverInput.dataset.storagePath) {
+      setStatus(elements.formStatus, "Enviando imagem de capa...");
+      const path = buildImageStoragePath(state.files.imagem, config.imageFolder, title, "capa");
+      coverInput.dataset.storagePath = await uploadImage(state.files.imagem, path);
+    }
+
+    if (config.tipo !== "noticia") return;
+
+    const blockInputs = Array.from(page.querySelectorAll("[data-news-image-input]"));
+    for (let index = 0; index < blockInputs.length; index += 1) {
+      const input = blockInputs[index];
+      const file = input.files[0];
+      if (!file || input.dataset.storagePath) continue;
+      setStatus(elements.formStatus, `Enviando imagem ${index + 1} do corpo da notícia...`);
+      const path = buildImageStoragePath(file, config.imageFolder, title, `bloco-${index + 1}`);
+      input.dataset.storagePath = await uploadImage(file, path);
+    }
+  };
+
+  const resetFileState = (page) => {
+    if (state.imagePreviewUrl) URL.revokeObjectURL(state.imagePreviewUrl);
+    state.imagePreviewUrl = "";
+    state.files.imagem = null;
+    state.files.pdf = null;
+    limparPdfTcc();
+
+    page.querySelectorAll("[data-file-input]").forEach((input) => {
+      input.value = "";
+      input.dataset.storagePath = "";
+    });
+    page.querySelectorAll("[data-file-feedback]").forEach((element) => {
+      element.textContent = "";
+    });
+    const imagePreview = page.querySelector("[data-image-preview]");
+    if (imagePreview) {
+      imagePreview.hidden = true;
+      imagePreview.removeAttribute("src");
+    }
+  };
+
+  const clearForm = (page, config, elements) => {
+    elements.form?.reset();
+    clearRepeatLists(page);
+    resetFileState(page);
+    const blockList = page.querySelector("[data-news-block-list]");
+    if (blockList) {
+      cleanupBlockPreviews(blockList);
+      blockList.replaceChildren();
+    }
+    state.blockSequence = 0;
+    renderCurrentPreview(page, config, elements);
+    setStatus(elements.formStatus, "Formulário limpo.", "success");
+  };
+
+  const saveToSupabase = async (page, config, elements) => {
+    const previewItem = buildContentObject(page, config, true);
+    const validation = validateContent(previewItem, config);
+    if (validation.errors.length) {
+      setStatus(elements.formStatus, validation.errors.join(" "), "error");
       return;
     }
 
-    items.forEach((item, index) => {
-      const card = createElement("article", "admin-saved-card");
-      const title = createElement("h3", "", item.titulo || `Item ${index + 1}`);
-      const meta = createElement("p", "", `${item.tipo || config.tipo} | ${getSummaryDate(item)}`);
-      const authors = createElement("p", "", Array.isArray(item.autores) && item.autores.length
-        ? `Autores: ${item.autores.join(", ")}`
-        : "Autores: n\u00e3o informados");
-      const actions = createElement("div", "admin-saved-actions");
+    elements.saveButton.disabled = true;
+    try {
+      await uploadSelectedImages(page, config, previewItem.titulo, elements);
+      const item = buildContentObject(page, config, false);
 
-      const viewButton = createElement("button", "admin-button admin-button-secondary", "Visualizar JSON");
-      viewButton.type = "button";
-      viewButton.addEventListener("click", () => {
-        state.generatedJson = item;
-        renderJson(elements.jsonPreview, item);
-        renderFriendlyPreview(elements.contentPreview, item);
-        setStatus(elements.formStatus, "JSON carregado na pr\u00e9-visualiza\u00e7\u00e3o.", "success");
-      });
+      if (config.requiresPdf && !item.pdf) {
+        setStatus(elements.formStatus, `Enviando PDF do ${config.saveLabel}...`);
+        const pdfUpload = await uploadPdfTcc(item.titulo, config.storagePdfFolder);
+        item.pdf = pdfUpload.publicUrl;
+        item.pdfStoragePath = pdfUpload.path;
+        const pdfInput = page.querySelector('[data-file-input="pdf"]');
+        if (pdfInput) pdfInput.dataset.storagePath = pdfUpload.publicUrl;
+      }
 
-      const deleteButton = createElement("button", "admin-button admin-button-danger", "Excluir");
-      deleteButton.type = "button";
-      deleteButton.addEventListener("click", () => {
-        const currentItems = getStorageItems(config.storageKey);
-        currentItems.splice(index, 1);
-        setStorageItems(config.storageKey, currentItems);
-        renderSavedItems(page, config, elements);
-        setStatus(elements.formStatus, "Item removido do localStorage.", "success");
-      });
-
-      actions.append(viewButton, deleteButton);
-      card.append(title, meta, authors, actions);
-      list.appendChild(card);
-    });
-  };
-
-  const setupManualMode = (page, config, elements) => {
-    const input = elements.manualInput;
-
-    if (input) {
-      input.placeholder = JSON.stringify(config.sample, null, 2);
-    }
-
-    if (elements.manualValidate) {
-      elements.manualValidate.addEventListener("click", () => {
-        try {
-          const item = parseManualJson(input);
-          renderJson(elements.manualPreview, item);
-          setStatus(elements.manualStatus, "JSON v\u00e1lido.", "success");
-        } catch (error) {
-          renderJson(elements.manualPreview, null);
-          setStatus(elements.manualStatus, `JSON inv\u00e1lido: ${error.message}`, "error");
-        }
-      });
-    }
-
-    if (elements.manualSave) {
-      elements.manualSave.addEventListener("click", () => {
-        try {
-          const item = parseManualJson(input);
-          const validation = validateContent(item, config);
-
-          if (validation.errors.length) {
-            throw new Error(validation.errors.join(" "));
-          }
-
-          saveStorageItem(config.storageKey, item);
-          renderJson(elements.manualPreview, item);
-          renderSavedItems(page, config, elements);
-          setStatus(elements.manualStatus, `JSON salvo temporariamente em ${config.storageKey}.`, "success");
-          // TODO: enviar JSON para rota POST protegida no backend.
-          // TODO: salvar dados no Supabase.
-          // TODO: implementar upload real de PDFs.
-          // TODO: validar estrutura semantica de cada tipo de conteudo.
-        } catch (error) {
-          setStatus(elements.manualStatus, `N\u00e3o foi poss\u00edvel salvar: ${error.message}`, "error");
-        }
-      });
-    }
-
-    if (elements.manualClear) {
-      elements.manualClear.addEventListener("click", () => {
-        if (input) input.value = "";
-        renderJson(elements.manualPreview, null);
-        setStatus(elements.manualStatus, "");
-      });
+      setStatus(elements.formStatus, `Salvando ${config.saveLabel} no Supabase...`);
+      await salvarConteudo(item);
+      const warning = validation.warnings.length ? ` ${validation.warnings.join(" ")}` : "";
+      const successLabel = config.tipo === "noticia"
+        ? "Notícia salva"
+        : config.tipo === "artigo"
+          ? "Artigo salvo"
+          : "TCC salvo";
+      setStatus(elements.formStatus, `${successLabel} no Supabase com sucesso.${warning}`, validation.warnings.length ? "warning" : "success");
+      renderCurrentPreview(page, config, elements);
+    } catch (error) {
+      const message = error?.message || "Erro desconhecido.";
+      console.error("Erro ao salvar no Supabase:", error);
+      setStatus(elements.formStatus, `Não foi possível salvar ${config.saveLabel}: ${message}`, "error");
+    } finally {
+      elements.saveButton.disabled = false;
     }
   };
-
-  const getElements = (page) => ({
-    form: page.querySelector("#admin-content-form"),
-    generateButton: page.querySelector("#admin-form-generate"),
-    saveButton: page.querySelector("#admin-form-save"),
-    supabaseButton: page.querySelector("#admin-form-save-supabase"),
-    copyButton: page.querySelector("#admin-form-copy"),
-    clearButton: page.querySelector("#admin-form-clear"),
-    formStatus: page.querySelector("#admin-form-status"),
-    contentPreview: page.querySelector("#admin-content-preview"),
-    jsonPreview: page.querySelector("#admin-json-preview"),
-    savedList: page.querySelector("#admin-saved-list"),
-    manualInput: page.querySelector("#admin-manual-json"),
-    manualValidate: page.querySelector("#admin-manual-validate"),
-    manualSave: page.querySelector("#admin-manual-save"),
-    manualClear: page.querySelector("#admin-manual-clear"),
-    manualStatus: page.querySelector("#admin-manual-status"),
-    manualPreview: page.querySelector("#admin-manual-preview"),
-  });
 
   const initPage = () => {
     const page = document.querySelector("[data-admin-form-page]");
     if (!page) return;
 
     const config = getConfig(page);
-    const elements = getElements(page);
+    const elements = {
+      form: page.querySelector("#admin-content-form"),
+      saveButton: page.querySelector("#admin-form-save-supabase"),
+      clearButton: page.querySelector("#admin-form-clear"),
+      formStatus: page.querySelector("#admin-form-status"),
+      contentPreview: page.querySelector("#admin-content-preview"),
+    };
 
     setupRepeatLists(page);
     setupFileDrop(page, config, elements);
-    setupManualMode(page, config, elements);
-    renderFriendlyPreview(elements.contentPreview, null);
-    renderSavedItems(page, config, elements);
+    if (config.tipo === "noticia") setupNewsBlockEditor(page, elements);
 
-    if (elements.form) {
-      elements.form.addEventListener("submit", (event) => {
-        event.preventDefault();
-        generateContent(page, config, elements);
-      });
-    }
+    let previewFrame = 0;
+    const schedulePreview = () => {
+      cancelAnimationFrame(previewFrame);
+      previewFrame = requestAnimationFrame(() => renderCurrentPreview(page, config, elements));
+    };
+    page.addEventListener("admin:preview-change", schedulePreview);
+    elements.form?.addEventListener("input", schedulePreview);
+    elements.form?.addEventListener("submit", (event) => {
+      event.preventDefault();
+      saveToSupabase(page, config, elements);
+    });
+    elements.clearButton?.addEventListener("click", () => clearForm(page, config, elements));
 
-    if (elements.generateButton) {
-      elements.generateButton.addEventListener("click", () => {
-        generateContent(page, config, elements);
-      });
-    }
-
-    if (elements.saveButton) {
-      elements.saveButton.addEventListener("click", () => {
-        const item = generateContent(page, config, elements, false);
-
-        if (!item) return;
-
-        saveStorageItem(config.storageKey, item);
-        renderSavedItems(page, config, elements);
-        setStatus(elements.formStatus, `Conte\u00fado salvo temporariamente em ${config.storageKey}.`, "success");
-        // TODO: enviar JSON para rota POST protegida no backend.
-        // TODO: salvar dados no Supabase.
-        // TODO: implementar upload real de PDFs.
-        // TODO: validar estrutura semantica de cada tipo de conteudo.
-      });
-    }
-
-    if (elements.supabaseButton) {
-      elements.supabaseButton.addEventListener("click", async () => {
-        const item = generateContent(page, config, elements, false);
-
-        if (!item) return;
-
-        elements.supabaseButton.disabled = true;
-        setStatus(elements.formStatus, "Salvando no Supabase...");
-
-        try {
-          if (config.requiresPdf) {
-            const contentLabel = config.tipo === "tcc" ? "TCC" : "artigo";
-            setStatus(elements.formStatus, `Enviando PDF do ${contentLabel}...`);
-            const pdfUpload = await uploadPdfTcc(item.titulo, config.storagePdfFolder);
-            item.pdf = pdfUpload.publicUrl;
-            item.pdfStoragePath = pdfUpload.path;
-            state.generatedJson = item;
-            renderJson(elements.jsonPreview, item);
-            renderFriendlyPreview(elements.contentPreview, item, state.imagePreviewUrl);
-            setStatus(elements.formStatus, `PDF enviado. Salvando ${contentLabel} no Supabase...`);
-          }
-
-          await salvarConteudo(item);
-          setStatus(elements.formStatus, "Conte\u00fado salvo no Supabase com sucesso.", "success");
-        } catch (error) {
-          const message = error && error.message ? error.message : "Erro desconhecido.";
-          console.error("Erro ao salvar no Supabase:", error);
-          setStatus(elements.formStatus, config.requiresPdf
-            ? `Erro ao enviar o PDF ou salvar o conte\u00fado: ${message}`
-            : `Erro ao salvar no Supabase: ${message}`, "error");
-        } finally {
-          elements.supabaseButton.disabled = false;
-        }
-      });
-    }
-
-    if (elements.copyButton) {
-      elements.copyButton.addEventListener("click", async () => {
-        try {
-          const text = elements.jsonPreview ? elements.jsonPreview.textContent.trim() : "";
-          await copyText(text);
-          setStatus(elements.formStatus, "JSON copiado.", "success");
-        } catch (error) {
-          setStatus(elements.formStatus, error.message, "error");
-        }
-      });
-    }
-
-    if (elements.clearButton) {
-      elements.clearButton.addEventListener("click", () => {
-        clearForm(page, elements);
-      });
-    }
-  };
-
-  window.LigaAdminForm = {
-    slugify,
-    generateId,
-    addRepeatItem,
-    getRepeatValues,
-    getExpectedFilePath,
-    buildContentObject,
-    validateContent,
-    saveStorageItem,
-    getStorageItems,
-    renderSavedItems,
-    clearForm,
+    renderCurrentPreview(page, config, elements);
   };
 
   document.addEventListener("DOMContentLoaded", initPage);
