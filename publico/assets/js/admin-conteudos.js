@@ -33,12 +33,28 @@ export function montarLinhaConteudo(objeto) {
 
 export async function salvarConteudo(objeto) {
   const linha = montarLinhaConteudo(objeto);
+  let existingId = objeto.supabaseId || null;
 
-  const { data, error } = await supabase
-    .from("conteudos")
-    .insert(linha)
-    .select()
-    .single();
+  if (!existingId) {
+    const { data: existing, error: searchError } = await supabase
+      .from("conteudos")
+      .select("id")
+      .eq("slug", linha.slug)
+      .limit(1)
+      .maybeSingle();
+
+    if (searchError) {
+      console.error("Erro ao verificar conteudo existente:", searchError);
+      throw searchError;
+    }
+
+    existingId = existing?.id || null;
+  }
+
+  const query = existingId
+    ? supabase.from("conteudos").update(linha).eq("id", existingId)
+    : supabase.from("conteudos").insert(linha);
+  const { data, error } = await query.select().single();
 
   if (error) {
     console.error("Erro ao salvar conteudo:", error);

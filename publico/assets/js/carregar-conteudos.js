@@ -1,4 +1,5 @@
 import { supabase } from "./supabase-client.js";
+import { obterUrlImagem } from "./noticia-blocos.js";
 
 const normalizeArray = (value) => {
   if (Array.isArray(value)) return value;
@@ -10,9 +11,11 @@ export const normalizarConteudo = (row) => {
   const dados = row && row.dados && typeof row.dados === "object" && !Array.isArray(row.dados)
     ? row.dados
     : {};
+  const imagemPath = row.imagem_path || dados.imagem || "";
 
   return {
     ...dados,
+    dados,
     id: row.slug || dados.id || row.id,
     supabaseId: row.id,
     slug: row.slug || dados.slug || "",
@@ -26,7 +29,8 @@ export const normalizarConteudo = (row) => {
     curso: row.curso ?? dados.curso ?? "",
     ano: row.ano ?? dados.ano ?? null,
     data: row.data_publicacao ?? dados.data ?? "",
-    imagem: row.imagem_path || dados.imagem || "",
+    imagemPath,
+    imagem: obterUrlImagem(imagemPath),
     pdf: row.pdf_path || dados.pdf || "",
     publicado: row.publicado ?? dados.publicado ?? true,
     createdAt: row.created_at || dados.createdAt || "",

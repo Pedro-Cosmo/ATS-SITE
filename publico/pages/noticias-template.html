@@ -1,95 +1,52 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-   <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <link rel="stylesheet" href="/assets/css/includes.css">
-      <link rel="stylesheet" href="/assets/css/pages.css">
-<title>Not�cia</title>
-   </head>
-   <body class="pagina-noticia">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/assets/css/includes.css">
+  <link rel="stylesheet" href="/assets/css/pages.css">
+  <title>Not&iacute;cia | LIGATS</title>
+</head>
+<body class="pagina-noticia">
+  <div data-include="/includes/header.html"></div>
 
-
-<!----------------------------cabeçalho --------------------------------->
-      <div data-include="/includes/header.html"></div>
-
-
- <!----------------------------main --------------------------------->
-
-
-      <main class="noticia-detalhe">
-         <div class="noticia-layout">
-            <div class="noticia-conteudo">
-            <article class="noticia-corpo">
-               <h1 id="titulo"></h1>
-               <div class="noticia-meta">
-                  <span id="autor"></span>
-               </div>
-               <p id="descricao-longa"></p>
-               <a href="/index.html#titulo-noticias" class="voltar">? Voltar</a>
-            </article>
-
-            <aside class="noticia-side">
-               <h3>Mais Notícias</h3>
-               <ul id="related" class="related-list">
-                  <!-- itens relacionados serão inseridos pelo script -->
-               </ul>
-
-               <div class="paginador-bloco">
-                  <div id="react-pagination"></div>
-               </div>
-            </aside>
+  <main class="noticia-detalhe">
+    <div class="noticia-layout">
+      <div class="noticia-conteudo">
+        <article class="noticia-corpo">
+          <header class="noticia-cabecalho">
+            <h1 id="titulo"></h1>
+            <p id="subtitulo" class="noticia-subtitulo" hidden></p>
+            <div class="noticia-meta">
+              <time id="data-publicacao" hidden></time>
+              <span id="autor"></span>
             </div>
-         </div>
-      </main>
+            <ul id="palavras-chave" class="noticia-palavras-chave" aria-label="Palavras-chave" hidden></ul>
+          </header>
 
+          <figure id="imagem-capa" class="noticia-capa" hidden>
+            <img id="imagem-capa-src" alt="">
+          </figure>
 
+          <div id="corpo-noticia" class="noticia-blocos"></div>
+          <a href="/index.html#titulo-noticias" class="voltar">&larr; Voltar</a>
+        </article>
 
+        <aside class="noticia-side" aria-labelledby="mais-noticias">
+          <h3 id="mais-noticias">Mais Not&iacute;cias</h3>
+          <ul id="related" class="related-list"></ul>
 
-<!----------------------------footer --------------------------------->
+          <div class="paginador-bloco">
+            <div id="react-pagination"></div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </main>
 
-      <div data-include="/includes/footer.html"></div>
+  <div data-include="/includes/footer.html"></div>
 
-      <script src="/assets/js/include-partials.js"></script>
-
-
-<!----------------------------script --------------------------------->
-      <script type="module" src="/assets/js/detalhe-noticia.js"></script>
-      <script type="application/json" id="legacy-noticia-detalhe-script">
-             const params = new URLSearchParams(window.location.search);
-             const id = Number(params.get("id"));
-
-             fetch("/assets/data/noticias.json")
-                .then(res => res.json())
-                .then(noticias => {
-                   const noticia = noticias.find(n => n.id === id);
-                   if (!noticia) return;
-
-                   document.getElementById("titulo").textContent = noticia.descricaoCurta;
-                   document.getElementById("descricao-longa").textContent = noticia.descricaoLonga;
-                   document.title = noticia.descricaoCurta;
-
-                   // preencher autor se existir
-                   const autorEl = document.getElementById("autor");
-                   autorEl.textContent = noticia.autor ? `Por ${noticia.autor}` : "Liga ATS";
-
-                   // popular lista de relacionados (exceto a not�cia atual)
-                   const relatedEl = document.getElementById('related');
-                   const others = noticias.filter(n => n.id !== id).slice(0,5);
-                   others.forEach(n => {
-                      const li = document.createElement('li');
-                      const a = document.createElement('a');
-                      a.href = `/pages/noticias-template.html?id=${n.id}`;
-                      a.textContent = n.descricaoCurta || `Not�cia ${n.id}`;
-                      li.appendChild(a);
-                      relatedEl.appendChild(li);
-                   });
-
-                   // Nota: o elemento #react-pagination foi criado como ponto de montagem
-                   // para quando voc� integrar o componente de pagina��o em React.
-                });
-      </script>
-
-      
-   </body>
+  <script src="/assets/js/include-partials.js"></script>
+  <script type="module" src="/assets/js/detalhe-noticia.js"></script>
+</body>
 </html>
