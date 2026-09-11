@@ -9,6 +9,60 @@ const createElement = (tag, className, text) => {
   return element;
 };
 
+const DATE_PATTERN = /^(\d{4})-(\d{2})-(\d{2})$/;
+const LOCAL_DATE_TIME_PATTERN = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2}))?$/;
+
+const isLeapYear = (year) => year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
+
+const isValidCalendarDate = (year, month, day) => {
+  const monthLengths = [31, isLeapYear(year) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  return year > 0 && month >= 1 && month <= 12 && day >= 1 && day <= monthLengths[month - 1];
+};
+
+export const normalizarDataHoraPublicacao = (value) => {
+  const text = String(value || "").trim();
+  const match = text.match(LOCAL_DATE_TIME_PATTERN);
+  if (!match) return "";
+
+  const [, yearText, monthText, dayText, hourText, minuteText, secondText = "00"] = match;
+  const year = Number(yearText);
+  const month = Number(monthText);
+  const day = Number(dayText);
+  const hour = Number(hourText);
+  const minute = Number(minuteText);
+  const second = Number(secondText);
+
+  if (!isValidCalendarDate(year, month, day) || hour > 23 || minute > 59 || second > 59) return "";
+  return `${yearText}-${monthText}-${dayText}T${hourText}:${minuteText}:${secondText}`;
+};
+
+export const formatarDataPublicacao = (publicadoEm, dataAlternativa = "") => {
+  const normalizedDateTime = normalizarDataHoraPublicacao(publicadoEm);
+  if (normalizedDateTime) {
+    const match = normalizedDateTime.match(LOCAL_DATE_TIME_PATTERN);
+    const [, year, month, day, hour, minute] = match;
+    return `${day}/${month}/${year} • ${hour}h${minute}`;
+  }
+
+  const fallbackText = String(dataAlternativa || "").trim();
+  const dateText = fallbackText.slice(0, 10);
+  const match = dateText.match(DATE_PATTERN);
+  if (!match) return fallbackText;
+
+  const [, year, month, day] = match;
+  if (!isValidCalendarDate(Number(year), Number(month), Number(day))) return fallbackText;
+  return `${day}/${month}/${year}`;
+};
+
+export const formatarAutoresNoticia = (authors) => {
+  const values = (Array.isArray(authors) ? authors : [authors])
+    .map((author) => String(author || "").trim())
+    .filter(Boolean);
+
+  if (values.length <= 1) return values[0] || "";
+  return `${values.slice(0, -1).join(", ")} e ${values[values.length - 1]}`;
+};
+
 const isReadyUrl = (value) => /^(?:https?:|data:|blob:)/i.test(value) || value.startsWith("/");
 
 export const obterUrlImagem = (path) => {

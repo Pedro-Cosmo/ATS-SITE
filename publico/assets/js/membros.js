@@ -1,6 +1,8 @@
 import { supabase } from "./supabase-client.js";
 
 const PLACEHOLDER = "/assets/data/img/membro-placeholder.png";
+const TODOS_OS_MEMBROS = Symbol("todos-os-membros");
+let equalizeFrame = 0;
 
 const renderMessage = (container, message) => {
   container.innerHTML = "";
@@ -124,10 +126,8 @@ function getSetores(rows) {
   );
 }
 
-function renderOrganograma(container, rows) {
+function createOrganogramaTree(rows) {
   const roots = buildTree(rows);
-
-  container.innerHTML = "";
   const treeWrap = document.createElement("ul");
   treeWrap.className = "organograma-tree";
 
@@ -135,55 +135,115 @@ function renderOrganograma(container, rows) {
     treeWrap.appendChild(createNodeElement(root));
   });
 
+  return treeWrap;
+}
+
+function scheduleCardEqualization(container) {
+  container.style.removeProperty("--organograma-card-height");
+  cancelAnimationFrame(equalizeFrame);
+
+  equalizeFrame = requestAnimationFrame(() => {
+    const cards = Array.from(container.querySelectorAll(".organograma-card"));
+    if (!cards.length) return;
+
+    const largestHeight = Math.max(...cards.map((card) => card.getBoundingClientRect().height));
+    container.style.setProperty("--organograma-card-height", `${Math.ceil(largestHeight)}px`);
+  });
+}
+
+function renderOrganograma(container, rows) {
+  container.innerHTML = "";
+  const treeWrap = createOrganogramaTree(rows);
   container.appendChild(treeWrap);
+  scheduleCardEqualization(container);
+}
+
+function renderTodosOsSetores(container, rows, setores) {
+  container.innerHTML = "";
+
+  const allGroups = document.createElement("div");
+  allGroups.className = "organograma-todos";
+
+  const appendGroup = (label, members) => {
+    if (!members.length) return;
+
+    const group = document.createElement("section");
+    group.className = "organograma-grupo";
+    group.setAttribute("aria-label", label);
+
+    const heading = document.createElement("h3");
+    heading.className = "organograma-grupo-titulo";
+    heading.textContent = label;
+
+    group.append(heading, createOrganogramaTree(members));
+    allGroups.appendChild(group);
+  };
+
+  setores.forEach((setor) => {
+    const members = rows.filter((member) => (
+      typeof member.setor === "string" && member.setor.trim() === setor
+    ));
+    appendGroup(setor, members);
+  });
+
+  const membersWithoutSector = rows.filter((member) => (
+    typeof member.setor !== "string" || !member.setor.trim()
+  ));
+  appendGroup("Sem setor", membersWithoutSector);
+
+  container.appendChild(allGroups);
+  scheduleCardEqualization(container);
 }
 
 function configurarSetores(rows, nav, titulo, container) {
   const setores = getSetores(rows);
 
   nav.innerHTML = "";
-
-  if (!setores.length) {
-    nav.hidden = true;
-    titulo.hidden = true;
-    renderOrganograma(container, rows);
-    return;
-  }
-
   const buttons = new Map();
 
   const selecionarSetor = (setorSelecionado) => {
-    const membrosDoSetor = rows.filter((membro) => {
-      const setor = typeof membro.setor === "string" ? membro.setor.trim() : "";
-      return setor === setorSelecionado;
-    });
-
     buttons.forEach((button, setor) => {
       const isActive = setor === setorSelecionado;
       button.classList.toggle("is-active", isActive);
       button.setAttribute("aria-pressed", String(isActive));
     });
 
+    if (setorSelecionado === TODOS_OS_MEMBROS) {
+      titulo.textContent = "Todos os membros";
+      renderTodosOsSetores(container, rows, setores);
+      return;
+    }
+
+    const membrosDoSetor = rows.filter((membro) => {
+      const setor = typeof membro.setor === "string" ? membro.setor.trim() : "";
+      return setor === setorSelecionado;
+    });
+
     titulo.textContent = setorSelecionado;
     renderOrganograma(container, membrosDoSetor);
   };
 
-  setores.forEach((setor) => {
+  const appendFilterButton = (value, label) => {
     const button = document.createElement("button");
     button.type = "button";
     button.className = "setor-button";
-    button.textContent = setor;
+    button.textContent = label;
     button.setAttribute("aria-controls", "organograma");
     button.setAttribute("aria-pressed", "false");
-    button.addEventListener("click", () => selecionarSetor(setor));
+    button.addEventListener("click", () => selecionarSetor(value));
 
-    buttons.set(setor, button);
+    buttons.set(value, button);
     nav.appendChild(button);
+  };
+
+  appendFilterButton(TODOS_OS_MEMBROS, "Todos");
+  setores.forEach((setor) => {
+    appendFilterButton(setor, setor);
   });
 
   nav.hidden = false;
   titulo.hidden = false;
-  selecionarSetor(setores[0]);
+  selecionarSetor(TODOS_OS_MEMBROS);
 }
 
 async function carregarMembros() {
@@ -221,3 +281,7 @@ async function carregarMembros() {
 }
 
 document.addEventListener("DOMContentLoaded", carregarMembros);
+window.addEventListener("resize", () => {
+  const container = document.getElementById("organograma");
+  if (container) scheduleCardEqualization(container);
+});
