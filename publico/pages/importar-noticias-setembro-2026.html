@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Importar notícias — LIGATS</title>
+  <style>
+    :root { color-scheme: light; font-family: Arial, sans-serif; }
+    body { margin: 0; background: #eef5f3; color: #123b34; }
+    main { width: min(760px, calc(100% - 32px)); margin: 48px auto; padding: 32px; box-sizing: border-box; background: #fff; border: 1px solid #c8dad5; border-radius: 16px; box-shadow: 0 12px 34px rgba(18, 59, 52, .12); }
+    h1 { margin-top: 0; }
+    button { border: 0; border-radius: 10px; padding: 14px 20px; background: #0d604d; color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
+    button:disabled { opacity: .55; cursor: wait; }
+    #status { margin-top: 20px; padding: 14px; border-radius: 10px; background: #f4f8f7; white-space: pre-wrap; overflow-wrap: anywhere; }
+    #resultado { padding-left: 22px; }
+    .erro { color: #8a1c1c; }
+    .sucesso { color: #075c35; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Importar notícias de setembro de 2026</h1>
+    <p>Esta página administrativa importa oito notícias, envia as imagens ao Supabase Storage e atualiza a primeira notícia existente sem duplicá-la.</p>
+    <p><strong>Autora:</strong> Letícia Welbert<br><strong>Horário:</strong> 09h<br><strong>Datas:</strong> 01, 02, 03, 04, 07, 08, 09 e 10/09/2026.</p>
+    <button id="importar" type="button" hidden>Importar 8 notícias</button>
+    <div id="status" role="status" aria-live="polite">Verificando a sessão administrativa…</div>
+    <ol id="resultado"></ol>
+  </main>
+  <script type="module" src="/assets/js/importar-noticias-setembro-2026.js"></script>
+</body>
+</html>
