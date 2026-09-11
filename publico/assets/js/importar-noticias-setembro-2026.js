@@ -1,7 +1,6 @@
 import { supabase } from "./supabase-client.js";
 import { gerarSlug, salvarConteudo } from "./admin-conteudos.js";
 
-const BUCKET = "site-images";
 const ASSET_ROOT = "/assets/img/importacao-noticias-2026";
 const AUTHOR = "Letícia Welbert";
 
@@ -152,25 +151,6 @@ const collectFiles = (noticia) => {
   return [...files];
 };
 
-const uploadFile = async (newsIndex, fileName) => {
-  const response = await fetch(`${ASSET_ROOT}/${encodeURIComponent(fileName)}`, { cache: "no-store" });
-  if (!response.ok) throw new Error(`Não foi possível carregar ${fileName} (${response.status}).`);
-
-  const fileBlob = await response.blob();
-  const extension = fileName.split(".").pop().toLowerCase();
-  const baseName = fileName.replace(/\.[^.]+$/, "").toLowerCase();
-  const contentType = fileBlob.type || (extension === "png" ? "image/png" : "image/jpeg");
-  const path = `noticias/importacao-setembro-2026-noticia-${String(newsIndex + 1).padStart(2, "0")}-${baseName}-${crypto.randomUUID()}.${extension}`;
-  const { data, error } = await supabase.storage.from(BUCKET).upload(path, fileBlob, {
-    cacheControl: "3600",
-    contentType,
-    upsert: false,
-  });
-
-  if (error) throw new Error(`Falha no upload de ${fileName}: ${error.message || error}`);
-  return data.path;
-};
-
 const resolveBlock = (block, paths) => {
   if (block.tipo === "paragrafo") return block;
   if (block.tipo === "imagem") {
@@ -187,12 +167,10 @@ const resolveBlock = (block, paths) => {
 };
 
 const importNews = async (noticia, index) => {
-  setStatus(`Enviando imagens da notícia ${index + 1} de ${noticias.length}…`);
-  const paths = {};
-
-  for (const fileName of collectFiles(noticia)) {
-    paths[fileName] = await uploadFile(index, fileName);
-  }
+  setStatus(`Preparando imagens da notícia ${index + 1} de ${noticias.length}…`);
+  const paths = Object.fromEntries(
+    collectFiles(noticia).map((fileName) => [fileName, `${ASSET_ROOT}/${fileName}`]),
+  );
 
   setStatus(`Salvando a notícia ${index + 1} de ${noticias.length}…`);
   const content = {
@@ -210,7 +188,11 @@ const importNews = async (noticia, index) => {
     blocos: noticia.blocos.map((block) => resolveBlock(block, paths)),
   };
 
-  return salvarConteudo(content);
+  try {
+    return await salvarConteudo(content);
+  } catch (error) {
+    throw new Error(`Falha ao salvar “${noticia.titulo}”: ${error.message || error}`);
+  }
 };
 
 const validateAdmin = async () => {
