@@ -157,14 +157,20 @@ const uploadFile = async (newsIndex, fileName) => {
   if (!response.ok) throw new Error(`Não foi possível carregar ${fileName} (${response.status}).`);
 
   const fileBlob = await response.blob();
-  const path = `noticias/importacao-setembro-2026/noticia-${String(newsIndex + 1).padStart(2, "0")}-${fileName.toLowerCase()}`;
+  const path = `noticias/importacao-setembro-2026-v2/noticia-${String(newsIndex + 1).padStart(2, "0")}-${fileName.toLowerCase()}`;
   const { data, error } = await supabase.storage.from(BUCKET).upload(path, fileBlob, {
     cacheControl: "3600",
     contentType: fileBlob.type || undefined,
-    upsert: true,
+    upsert: false,
   });
 
-  if (error) throw error;
+  if (error) {
+    const errorText = `${error.message || ""} ${error.error || ""}`.toLowerCase();
+    if (error.statusCode === "409" || errorText.includes("already exists") || errorText.includes("duplicate")) {
+      return path;
+    }
+    throw error;
+  }
   return data.path;
 };
 
