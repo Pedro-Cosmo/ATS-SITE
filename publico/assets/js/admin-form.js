@@ -1,7 +1,13 @@
 import { salvarConteudo } from "./admin-conteudos.js";
 import { definirPdfTcc, limparPdfTcc, uploadPdfTcc } from "./admin-tccs.js";
 import { supabase } from "./supabase-client.js";
-import { renderizarBlocosNoticia, SITE_IMAGE_BUCKET } from "./noticia-blocos.js";
+import {
+  formatarAutoresNoticia,
+  formatarDataPublicacao,
+  normalizarDataHoraPublicacao,
+  renderizarBlocosNoticia,
+  SITE_IMAGE_BUCKET,
+} from "./noticia-blocos.js";
 
 (() => {
   const CONFIGS = {
@@ -254,7 +260,9 @@ import { renderizarBlocosNoticia, SITE_IMAGE_BUCKET } from "./noticia-blocos.js"
     };
 
     if (config.tipo === "noticia") {
-      item.data = getFieldValue(page, "data");
+      const publicationInput = getFieldValue(page, "publicadoEm");
+      item.publicadoEm = normalizarDataHoraPublicacao(publicationInput) || publicationInput;
+      item.data = publicationInput.slice(0, 10);
       item.blocos = buildNewsBlocks(page, preview);
       return item;
     }
@@ -307,7 +315,9 @@ import { renderizarBlocosNoticia, SITE_IMAGE_BUCKET } from "./noticia-blocos.js"
     if (!item.descricaoCurta) errors.push("Informe a descrição curta.");
     if (config.requiresAuthor && !item.autores.length) errors.push("Adicione ao menos um autor.");
     if (config.requiresYear && !isNumericYear(item.ano)) errors.push("Informe um ano numérico com 4 dígitos.");
-    if (config.requiresDate && !isValidDate(item.data)) errors.push("Informe uma data válida.");
+    if (config.requiresDate && (!isValidDate(item.data) || !normalizarDataHoraPublicacao(item.publicadoEm))) {
+      errors.push("Informe uma data e hora de publicação válidas.");
+    }
     if (config.requiresPdf && !state.files.pdf && !item.pdf) errors.push("Selecione um PDF.");
     if (config.tipo === "noticia") errors.push(...validateNewsBlocks(item.blocos));
     if (!item.imagem) warnings.push("Imagem de capa não selecionada. Ela é opcional, mas recomendada.");
@@ -333,23 +343,32 @@ import { renderizarBlocosNoticia, SITE_IMAGE_BUCKET } from "./noticia-blocos.js"
     list.append(term, description);
   };
 
-  const formatDate = (value) => {
-    if (!isValidDate(value)) return value;
-    const [year, month, day] = value.split("-").map(Number);
-    return new Intl.DateTimeFormat("pt-BR").format(new Date(year, month - 1, day));
-  };
-
   const renderNewsPreview = (container, item) => {
     container.replaceChildren();
     const article = createElement("article", "admin-news-preview");
     const header = createElement("header", "admin-news-preview-header");
     header.appendChild(createElement("h3", "", item.titulo || "Título da notícia"));
-    header.appendChild(createElement("p", "admin-preview-description", item.descricaoCurta || "Subtítulo da notícia"));
+    header.appendChild(createElement(
+      "p",
+      "admin-preview-description admin-news-preview-subtitle",
+      item.descricaoCurta || "Subtítulo da notícia",
+    ));
 
     const meta = createElement("div", "admin-news-preview-meta");
-    if (item.data) meta.appendChild(createElement("time", "", formatDate(item.data)));
-    if (item.autores.length) meta.appendChild(createElement("span", "", `Por ${item.autores.join(", ")}`));
-    if (meta.children.length) header.appendChild(meta);
+    const author = createElement("p", "admin-news-preview-author");
+    author.append(
+      document.createTextNode("Por "),
+      createElement("strong", "", formatarAutoresNoticia(item.autores) || "Liga ATS"),
+    );
+    meta.appendChild(author);
+
+    const publicationLabel = formatarDataPublicacao(item.publicadoEm, item.data);
+    if (publicationLabel) {
+      const publication = createElement("time", "", publicationLabel);
+      publication.dateTime = normalizarDataHoraPublicacao(item.publicadoEm) || item.data;
+      meta.appendChild(publication);
+    }
+    header.appendChild(meta);
     article.appendChild(header);
 
     if (item.imagem) {
@@ -359,18 +378,18 @@ import { renderizarBlocosNoticia, SITE_IMAGE_BUCKET } from "./noticia-blocos.js"
       article.appendChild(cover);
     }
 
-    if (item.palavrasChave.length) {
-      const keywords = createElement("ul", "admin-news-preview-keywords");
-      item.palavrasChave.forEach((keyword) => keywords.appendChild(createElement("li", "", keyword)));
-      article.appendChild(keywords);
-    }
-
     const body = createElement("div", "noticia-blocos admin-news-preview-body");
     renderizarBlocosNoticia(body, item.blocos, { resolverImagem: (path) => path });
     if (!body.children.length) {
       body.appendChild(createElement("p", "admin-empty", "Adicione blocos para visualizar o corpo da notícia."));
     }
     article.appendChild(body);
+
+    if (item.palavrasChave.length) {
+      const keywords = createElement("ul", "admin-news-preview-keywords");
+      item.palavrasChave.forEach((keyword) => keywords.appendChild(createElement("li", "", keyword)));
+      article.appendChild(keywords);
+    }
     container.appendChild(article);
   };
 

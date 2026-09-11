@@ -7,38 +7,38 @@
   <link rel="stylesheet" href="/assets/css/pages.css">
   <title>Not&iacute;cia | LIGATS</title>
 </head>
-<body class="pagina-noticia">
+<body class="pagina-noticia pagina-noticia-editorial">
   <div data-include="/includes/header.html"></div>
 
   <main class="noticia-detalhe">
     <div class="noticia-layout">
-      <div class="noticia-conteudo">
-        <article class="noticia-corpo">
+      <div class="noticia-conteudo noticia-conteudo-sem-relacionadas">
+        <article class="noticia-artigo">
           <header class="noticia-cabecalho">
             <h1 id="titulo"></h1>
             <p id="subtitulo" class="noticia-subtitulo" hidden></p>
             <div class="noticia-meta">
+              <p id="autor" class="noticia-autor" hidden>
+                <span class="noticia-autor-prefixo">Por </span><strong id="autor-nomes"></strong>
+              </p>
               <time id="data-publicacao" hidden></time>
-              <span id="autor"></span>
             </div>
-            <ul id="palavras-chave" class="noticia-palavras-chave" aria-label="Palavras-chave" hidden></ul>
           </header>
 
           <figure id="imagem-capa" class="noticia-capa" hidden>
             <img id="imagem-capa-src" alt="">
           </figure>
 
-          <div id="corpo-noticia" class="noticia-blocos"></div>
-          <a href="/index.html#titulo-noticias" class="voltar">&larr; Voltar</a>
+          <div class="noticia-corpo">
+            <div id="corpo-noticia" class="noticia-blocos"></div>
+            <ul id="palavras-chave" class="noticia-palavras-chave" aria-label="Palavras-chave" hidden></ul>
+            <a href="/index.html#titulo-noticias" class="voltar">&larr; Voltar</a>
+          </div>
         </article>
 
-        <aside class="noticia-side" aria-labelledby="mais-noticias">
-          <h3 id="mais-noticias">Mais Not&iacute;cias</h3>
+        <aside class="noticia-side" aria-labelledby="mais-noticias" hidden>
+          <h2 id="mais-noticias">Mais Not&iacute;cias</h2>
           <ul id="related" class="related-list"></ul>
-
-          <div class="paginador-bloco">
-            <div id="react-pagination"></div>
-          </div>
         </aside>
       </div>
     </div>

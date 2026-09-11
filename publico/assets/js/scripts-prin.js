@@ -1,5 +1,9 @@
 import { buscarConteudosComFallback } from "./carregar-conteudos.js";
 
+const obterTituloCardNoticia = (noticia, fallback = "Noticia") => (
+  String(noticia?.titulo || noticia?.descricaoCurta || fallback)
+);
+
 async function carregarNoticias() {
   try {
       const noticias = await buscarConteudosComFallback("noticia", "/assets/data/noticias.json");
@@ -71,14 +75,15 @@ async function carregarNoticias() {
         const minis = pagina.slice(1);
 
         if (principal) {
+          const tituloPrincipal = obterTituloCardNoticia(principal, "Noticia principal");
           if (principalImg) {
             principalImg.loading = "lazy";
             principalImg.decoding = "async";
             principalImg.src = principal.imagem || "/assets/data/img/logo.png";
-            principalImg.alt = principal.descricaoCurta || principal.titulo || "Noticia principal";
+            principalImg.alt = tituloPrincipal;
           }
           if (principalLegenda) {
-            principalLegenda.textContent = principal.descricaoCurta || principal.titulo || "";
+            principalLegenda.textContent = tituloPrincipal;
           }
           noticiaPrincipal.onclick = () => {
             window.location.href = `/pages/noticias-template.html?id=${principal.id}`;
@@ -90,15 +95,16 @@ async function carregarNoticias() {
           const img = clone.querySelector("img");
           const p = clone.querySelector("p");
           const card = clone.querySelector(".card-mini");
+          const tituloCard = obterTituloCardNoticia(noticia);
 
           if (img) {
             img.loading = "lazy";
             img.decoding = "async";
             img.src = noticia.imagem || "/assets/data/img/logo.png";
-            img.alt = noticia.descricaoCurta || noticia.titulo || "Noticia";
+            img.alt = tituloCard;
           }
           if (p) {
-            p.textContent = noticia.descricaoCurta || noticia.titulo || "";
+            p.textContent = tituloCard;
           }
           if (card) {
             card.addEventListener("click", () => {
