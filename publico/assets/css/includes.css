@@ -30,9 +30,10 @@
 
 .header .logo img,
 .logo-img {
-  width: 90px;
+  width: 220px;
   height: auto;
-  display: inline-block;
+  display: block;
+  object-fit: contain;
 }
 
 .menu {
@@ -153,10 +154,9 @@
     padding: 12px 14px;
   }
 
-  .header .logo-text {
-    font-size: 1.05rem;
-    padding: 4px 7px;
-    letter-spacing: 1px;
+  .header .logo img,
+  .logo-img {
+    width: 180px;
   }
 
   .menu-toggle {
@@ -256,6 +256,12 @@
   width: 80px;
 }
 
+.footer-logo-ligato {
+  width: min(100%, 190px);
+  height: auto;
+  object-fit: contain;
+}
+
 .footer-image-box {
   width: 180px;
   height: 90px;
@@ -293,6 +299,17 @@
   line-height: 1.4;
   flex-wrap: wrap;
   word-break: break-word;
+}
+
+.contact-item a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.contact-item a:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
 }
 
 .contact-item-address {
@@ -349,6 +366,10 @@
 
   .footer-logo {
     width: 64px;
+  }
+
+  .footer-logo-ligato {
+    width: min(55vw, 160px);
   }
 
   .footer-logo-small {
