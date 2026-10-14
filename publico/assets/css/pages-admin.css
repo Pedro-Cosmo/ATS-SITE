@@ -214,6 +214,7 @@
 
 .admin-field input,
 .admin-field textarea,
+.admin-field select,
 .admin-repeat-row input {
   width: 100%;
   border: 1px solid rgba(15, 63, 50, 0.28);
@@ -234,6 +235,7 @@
 
 .admin-field input:focus,
 .admin-field textarea:focus,
+.admin-field select:focus,
 .admin-repeat-row input:focus {
   border-color: #2f7f66;
   box-shadow: 0 0 0 3px rgba(47, 127, 102, 0.16);
