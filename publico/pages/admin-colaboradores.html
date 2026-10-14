@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerenciar Colaboradores | LIGATS</title>
+  <link rel="stylesheet" href="/assets/css/includes.css">
+  <link rel="stylesheet" href="/assets/css/pages.css">
+</head>
+<body class="admin-page">
+  <div data-include="/includes/header.html"></div>
+
+  <main class="admin-main" data-admin-colaboradores>
+    <section class="admin-shell" aria-labelledby="titulo-admin-colaboradores">
+      <div class="admin-topbar">
+        <div>
+          <p class="admin-eyebrow">Colaboradores</p>
+          <h1 id="titulo-admin-colaboradores">Gerenciar colaboradores</h1>
+        </div>
+
+        <div class="admin-topbar-actions">
+          <a class="admin-button admin-button-secondary" href="/pages/admin.html">Painel</a>
+          <button class="admin-button admin-button-secondary" type="button" data-admin-logout>Logout</button>
+        </div>
+      </div>
+
+      <div class="admin-form-layout admin-membros-layout">
+        <form class="admin-tool-panel admin-content-form" id="colaborador-form">
+          <h2>Dados do colaborador</h2>
+
+          <div class="admin-form-grid">
+            <label class="admin-field admin-field-wide">
+              <span>Nome</span>
+              <input type="text" name="nome" data-field="nome" maxlength="120" required>
+            </label>
+
+            <label class="admin-field admin-field-wide">
+              <span>Descrição</span>
+              <textarea name="descricao" data-field="descricao" rows="5" required></textarea>
+            </label>
+          </div>
+
+          <div class="admin-field admin-field-wide">
+            <span>Foto</span>
+            <div class="admin-dropzone" data-file-drop="foto">
+              <input type="file" accept=".jpg,.jpeg,.png,.webp" data-file-input="foto">
+              <div class="admin-dropzone-copy">
+                <strong>Selecione a foto do colaborador</strong>
+                <small>JPG, PNG ou WEBP, até 5 MB. Será enviada ao Supabase Storage.</small>
+              </div>
+              <button class="admin-button admin-button-secondary" type="button" data-file-trigger="foto">Selecionar imagem</button>
+              <div class="admin-file-feedback" data-file-feedback="foto"></div>
+              <img class="admin-image-preview" data-image-preview alt="Prévia da foto do colaborador" hidden>
+            </div>
+          </div>
+
+          <div class="admin-form-actions">
+            <button class="admin-button" id="colaborador-save" type="submit">Salvar colaborador</button>
+            <button class="admin-button admin-button-secondary" id="colaborador-clear" type="button">Limpar</button>
+            <a class="admin-button admin-button-secondary" href="/pages/admin.html">Voltar ao painel</a>
+          </div>
+
+          <p class="admin-status" id="colaborador-status" role="status" aria-live="polite"></p>
+        </form>
+
+        <aside class="admin-tool-panel admin-membros-list-panel" aria-labelledby="lista-colaboradores">
+          <h2 id="lista-colaboradores">Colaboradores cadastrados</h2>
+          <div id="colaboradores-lista" class="admin-saved-list"></div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <div data-include="/includes/footer.html"></div>
+
+  <script type="module" src="/assets/js/auth.js"></script>
+  <script src="/assets/js/include-partials.js"></script>
+  <script type="module" src="/assets/js/admin-colaboradores.js"></script>
+</body>
+</html>

@@ -93,6 +93,7 @@ const carregarTccs = async () => {
         const linkPdf = clone.querySelector(".btn-pdf");
         const btnDetalhe = clone.querySelector(".btn-detalhe");
         const autorEl = clone.querySelector(".autor");
+        const orientadorEl = clone.querySelector(".orientador");
         const tagsEl = clone.querySelector(".tags");
 
         if (img) {
@@ -124,6 +125,11 @@ const carregarTccs = async () => {
           autorEl.textContent = Array.isArray(tcc.autores) && tcc.autores.length
             ? `Autor(es): ${tcc.autores.join(", ")}`
             : "";
+        }
+
+        if (orientadorEl) {
+          const orientador = typeof tcc.orientador === "string" ? tcc.orientador.trim() : "";
+          orientadorEl.textContent = orientador ? `Orientador(a): ${orientador}` : "";
         }
 
         if (tagsEl) {

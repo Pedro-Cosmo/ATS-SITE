@@ -1,5 +1,7 @@
-const COLABORADORES_DATA_URL = "/assets/data/json/colaboradores.json";
+import { supabase } from "./supabase-client.js";
+
 const COLABORADORES_PLACEHOLDER = "/assets/data/img/membro-placeholder.png";
+const COLABORADORES_BUCKET = "site-images";
 
 const gerarIniciais = (nome) => {
   if (!nome || typeof nome !== "string") return "C";
@@ -26,13 +28,19 @@ const renderColaboradores = (colaboradores, grid, template) => {
     const fotoWrap = clone.querySelector(".membro-foto-wrap");
     const img = clone.querySelector(".membro-foto");
     const nomeEl = clone.querySelector(".membro-nome");
+    const descricaoEl = clone.querySelector(".membro-descricao");
 
     const nome = typeof colaborador.nome === "string" && colaborador.nome.trim()
       ? colaborador.nome.trim()
       : "Colaborador sem nome";
+    const imagemPath = typeof colaborador.imagem_path === "string"
+      ? colaborador.imagem_path.trim()
+      : "";
     const imagem = typeof colaborador.imagem === "string" && colaborador.imagem.trim()
       ? colaborador.imagem.trim()
-      : COLABORADORES_PLACEHOLDER;
+      : imagemPath
+        ? supabase.storage.from(COLABORADORES_BUCKET).getPublicUrl(imagemPath).data.publicUrl
+        : COLABORADORES_PLACEHOLDER;
 
     if (fotoWrap) {
       fotoWrap.setAttribute("data-iniciais", gerarIniciais(nome));
@@ -57,6 +65,13 @@ const renderColaboradores = (colaboradores, grid, template) => {
       nomeEl.textContent = nome;
     }
 
+    if (descricaoEl) {
+      descricaoEl.textContent = typeof colaborador.descricao === "string"
+        ? colaborador.descricao.trim()
+        : "";
+      descricaoEl.hidden = !descricaoEl.textContent;
+    }
+
     fragment.appendChild(clone);
   });
 
@@ -70,11 +85,13 @@ const carregarColaboradores = async () => {
   if (!grid || !template) return;
 
   try {
-    const resposta = await fetch(COLABORADORES_DATA_URL, { cache: "force-cache" });
-    if (!resposta.ok) throw new Error("Falha ao carregar colaboradores");
+    const { data, error } = await supabase
+      .from("colaboradores")
+      .select("nome, descricao, imagem_path")
+      .order("nome", { ascending: true });
+    if (error) throw error;
 
-    const dados = await resposta.json();
-    const colaboradores = Array.isArray(dados) ? dados : [];
+    const colaboradores = Array.isArray(data) ? data : [];
 
     if (!colaboradores.length) {
       renderMensagem(grid, "Nenhum colaborador cadastrado no momento.");
@@ -83,6 +100,7 @@ const carregarColaboradores = async () => {
 
     renderColaboradores(colaboradores, grid, template);
   } catch (erro) {
+    console.error("Erro ao carregar colaboradores:", erro);
     renderMensagem(grid, "Nao foi possivel carregar a lista de colaboradores.");
   }
 };

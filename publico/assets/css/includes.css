@@ -279,7 +279,7 @@
   align-items: flex-start;
   text-align: left;
   justify-self: end;
-  max-width: 340px;
+  max-width: 400px;
 }
 
 .footer-title {
@@ -299,6 +299,17 @@
   line-height: 1.4;
   flex-wrap: wrap;
   word-break: break-word;
+}
+
+.contact-item-email {
+  width: 100%;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  overflow-x: auto;
+}
+
+.contact-item-email a {
+  white-space: nowrap;
 }
 
 .contact-item a {
@@ -357,6 +368,7 @@
   }
 
   .footer-contacts {
+    width: 100%;
     max-width: 420px;
   }
 
